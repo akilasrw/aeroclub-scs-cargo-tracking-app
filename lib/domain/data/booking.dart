@@ -1,5 +1,5 @@
+import 'package:Cargo_Tracker/domain/data/cargo_booking_item.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:Cargo_Tracker/model/cargo_booking_item.dart';
 
 @JsonSerializable()
 class Booking {

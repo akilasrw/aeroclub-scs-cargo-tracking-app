@@ -1,18 +1,20 @@
+import 'package:Cargo_Tracker/domain/data/booking.dart';
+import 'package:Cargo_Tracker/domain/data/cargo_booking_item.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:Cargo_Tracker/model/booking.dart';
 import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
 
-import '../model/cargo_booking_item.dart';
 
-class ScanCargo extends StatefulWidget {
+@RoutePage()
+class ScanCargoPage extends StatefulWidget {
   Booking booking;
-  ScanCargo({Key? key, required this.booking}) : super(key: key);
+  ScanCargoPage({Key? key, required this.booking}) : super(key: key);
 
   @override
-  State<ScanCargo> createState() => _ScanCargoState();
+  State<ScanCargoPage> createState() => _ScanCargoState();
 }
 
-class _ScanCargoState extends State<ScanCargo> {
+class _ScanCargoState extends State<ScanCargoPage> {
   int scanCount = 0;
   final TextEditingController cargoController = TextEditingController();
   List<CargoBookingItem> bookingItems = [];

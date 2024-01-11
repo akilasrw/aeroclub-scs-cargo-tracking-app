@@ -1,22 +1,26 @@
 import 'dart:convert';
 
+import 'package:Cargo_Tracker/domain/data/booking.dart';
+import 'package:Cargo_Tracker/router/router.gr.dart';
+import 'package:Cargo_Tracker/screen/pickup_cargo/scan_cargo.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:Cargo_Tracker/model/cargo_agent.dart';
-import 'package:Cargo_Tracker/pickup_cargo/scan_cargo.dart';
 import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
 import 'package:http/http.dart' as http;
 
-import '../model/airport.dart';
-import '../model/booking.dart';
+import '../../domain/data/airport.dart';
+import '../../domain/data/cargo_agent.dart';
 
-class PickUpCargoMainDetails extends StatefulWidget {
-  const PickUpCargoMainDetails({Key? key}) : super(key: key);
+
+@RoutePage()
+class PickUpCargoMainDetailsPage extends StatefulWidget {
+  const PickUpCargoMainDetailsPage({Key? key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _PickUpCargoMainDetailsState();
 }
 
-class _PickUpCargoMainDetailsState extends State<PickUpCargoMainDetails> {
+class _PickUpCargoMainDetailsState extends State<PickUpCargoMainDetailsPage> {
   String result = '';
   final TextEditingController awbController = TextEditingController();
   final TextEditingController truckController = TextEditingController();
@@ -238,12 +242,8 @@ class _PickUpCargoMainDetailsState extends State<PickUpCargoMainDetails> {
                             minimumSize: const Size.fromHeight(50), // NEW
                           ),
                           onPressed: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (_){
-                                  var booking = Booking(awbController.text,1,originAirport?.id,desitnationAirport?.id,truckController.text,null);
-                                  return ScanCargo(booking: booking);
-                                }
-                            ));
+                            var booking = Booking(awbController.text,1,originAirport?.id,desitnationAirport?.id,truckController.text,null);
+                            context.router.push(ScanCargoRoute(booking: booking));
                           },
                           child: const Text(
                             'Submit',

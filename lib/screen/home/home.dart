@@ -1,9 +1,12 @@
+import 'package:Cargo_Tracker/router/router.gr.dart';
+import 'package:Cargo_Tracker/screen/pickup_cargo/pickup_cargo_main_details.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:Cargo_Tracker/pickup_cargo/pickup_cargo_main_details.dart';
 
-class Home extends StatelessWidget{
+@RoutePage()
+class HomePage extends StatelessWidget{
 
-  const Home({super.key});
+  const HomePage({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,11 +27,7 @@ class Home extends StatelessWidget{
                     minimumSize: const Size.fromHeight(50), // NEW
                   ),
                   onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (_){
-                          return const PickUpCargoMainDetails();
-                        }
-                    ));
+                    context.router.push(const PickUpCargoMainDetailsRoute());
                   },
                   child: const Text(
                     'Pick up Cargo',
