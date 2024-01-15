@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 
 import 'package:simple_barcode_scanner/constant.dart';
 
+import '../screen/handover_to_warehouse/handover_to_warehouse_main_details.dart';
 import 'router.gr.dart';
 
 @AutoRouterConfig()
@@ -11,8 +12,11 @@ class AppRouter extends $AppRouter {
 
   @override
   List<AutoRoute> get routes => [
-    AutoRoute(page: HomeRoute.page,initial: true),
+    AutoRoute(page: LoginRoute.page,initial: true),
+    AutoRoute(page: HomeRoute.page),
     AutoRoute(page: PickUpCargoMainDetailsRoute.page),
     AutoRoute(page: ScanCargoRoute.page),
+    AutoRoute(page: HandoverToWarehouseMainDetailsRoute.page),
+    AutoRoute(page: ScanAcceptCargoRoute.page)
   ];
 }
