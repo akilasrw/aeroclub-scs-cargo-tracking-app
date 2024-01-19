@@ -16,9 +16,10 @@ void main() async {
       WidgetsFlutterBinding.ensureInitialized();
       GetIt.I.registerSingleton<MessageService>(MessageService());
       GetIt.I.registerSingleton<AppRouter>(AppRouter());
-      // GetIt.I.registerSingleton<Repository>(RepositoryImpl(
-      //   baseURL: 'https://aeroclub-skytechcargo-app-dev-002.azurewebsites.net/',
-      // ));
+      GetIt.I.registerSingleton<Repository>(RepositoryImpl(
+        // baseURL: 'https://aeroclub-skytechcargo-app-dev-002.azurewebsites.net/',
+        baseURL: 'http://localhost:7130',
+      ));
       runApp(const App());
     },
         (dynamic error, dynamic stackTrace) {
