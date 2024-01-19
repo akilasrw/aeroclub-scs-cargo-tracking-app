@@ -1,58 +1,30 @@
-import 'dart:convert';
-
 import 'package:Cargo_Tracker/domain/data/booking.dart';
 import 'package:Cargo_Tracker/domain/data/cargo_booking_item.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
-import 'package:http/http.dart' as http;
 
 @RoutePage()
-class ScanAcceptCargoPage extends StatefulWidget {
+class ScanULDCargoPage extends StatefulWidget {
   Booking booking;
-  ScanAcceptCargoPage({Key? key, required this.booking}) : super(key: key);
+
+  ScanULDCargoPage({Key? key, required this.booking}) : super(key: key);
 
   @override
-  State<ScanAcceptCargoPage> createState() => _ScanCargoState();
+  State<ScanULDCargoPage> createState() => _ScanCargoState();
 }
 
-class _ScanCargoState extends State<ScanAcceptCargoPage> {
+class _ScanCargoState extends State<ScanULDCargoPage> {
   int scanCount = 0;
-  int originalPackageCount = 0;
   final TextEditingController cargoController = TextEditingController();
   List<CargoBookingItem> bookingItems = [];
-  List<String> scannedPackagelist = List.empty();
-
-  @override
-  void initState() {
-    super.initState();
-    getScannedPackages();
-  }
-
-  Future<List<String>?> getScannedPackages() async {
-    try {
-      var url = Uri.parse("https://aeroclub-skytechcargo-app-dev-002.azurewebsites.net/api/v1/CargoAgent/GetList");
-      var response = await http.get(url);
-      if (response.statusCode == 200) {
-        final parsed = json.decode(response.body).cast<Map<String, dynamic>>();
-        setState(() {
-          scannedPackagelist =  parsed.map<String>().toList();
-          originalPackageCount = scannedPackagelist.length;
-        });
-        return scannedPackagelist;
-      }
-    } catch (e) {
-      throw Exception('Unable to fetch products from the REST API');
-    }
-    return null;
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          title: const Text("Scan Cargo"),
+          title: const Text("Scan ULD Cargo"),
         ),
         body: Center(
             child: Container(
@@ -61,17 +33,9 @@ class _ScanCargoState extends State<ScanAcceptCargoPage> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text("Original Package Count : $originalPackageCount",
+                      Text("Packed count : $scanCount",
                           style: TextStyle(
                               color: Colors.grey[800],
-                              fontWeight: FontWeight.bold,
-                              fontSize: 30)),
-                      SizedBox(
-                        height: 30,
-                      ),
-                      Text("Scanned count : $scanCount",
-                          style: TextStyle(
-                              color: Colors.blue[900],
                               fontWeight: FontWeight.bold,
                               fontSize: 30)),
                       SizedBox(
@@ -88,7 +52,7 @@ class _ScanCargoState extends State<ScanAcceptCargoPage> {
                                     decoration: const InputDecoration(
                                       border: OutlineInputBorder(
                                           borderSide:
-                                          BorderSide(color: Colors.teal)),
+                                              BorderSide(color: Colors.teal)),
                                       labelText: 'Consignment No',
                                     ))),
                             SizedBox(
@@ -112,13 +76,14 @@ class _ScanCargoState extends State<ScanAcceptCargoPage> {
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) =>
-                                            const SimpleBarcodeScannerPage(),
+                                                const SimpleBarcodeScannerPage(),
                                           ));
                                       setState(() {
                                         if (res is String) {
                                           scanCount++;
                                           cargoController.text = res;
-                                          CargoBookingItem bookingItem = CargoBookingItem(1, res);
+                                          CargoBookingItem bookingItem =
+                                              CargoBookingItem(1, res);
                                           bookingItems.add(bookingItem);
                                         }
                                       });
@@ -149,7 +114,7 @@ class _ScanCargoState extends State<ScanAcceptCargoPage> {
                             booking?.packageItems = bookingItems;
                           },
                           child: const Text(
-                            'Done',
+                            'Finalize ULD',
                             style: TextStyle(fontSize: 24, color: Colors.black),
                           ))
                     ]))));

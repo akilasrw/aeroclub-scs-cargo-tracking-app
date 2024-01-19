@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 class AppTheme {
   // COLOURS
 
-  static const primaryColour = Color(0xffD97C9D);
-  static const secondaryColour = Color(0xffffffff);
+  static const primaryColour = Color(0xff1a64ea);
+  static const secondaryColour = Color(0xffe1dcdc);
   static const secondaryColourContrast = Color(0xff5B2F2C);
   static const primaryWelcomePageBackground = Color(0xFFFF77A8);
   static const subtitleTextColour = Color(0xff767676);
@@ -82,12 +82,13 @@ class AppTheme {
           centerTitle: true,
           elevation: 0.0,
           iconTheme: IconThemeData(
-            color: primaryColour,
-            size: 15.0,
+            color: secondaryColour,
+            size: 30.0,
           ),
           titleTextStyle: TextStyle(
             color: Colors.black,
-            fontSize: 17.0,
+            fontSize: 25.0,
+            fontWeight: FontWeight.bold
           ),
           titleSpacing: 0.0,
         ),
@@ -260,6 +261,7 @@ class AppTheme {
             fontWeight: FontWeight.w400,
           ),
           labelStyle: TextStyle(color: primaryColour),
+          iconColor: primaryColour
         ),
 
         outlinedButtonTheme: OutlinedButtonThemeData(
@@ -313,7 +315,7 @@ class AppTheme {
 
         // Icon theme which contrasts with the primary colour.
         primaryIconTheme: const IconThemeData(
-          color: primaryColour,
+          color: secondaryColourContrast,
         ),
 
         // Text theme which constrasts with the primary colour.
