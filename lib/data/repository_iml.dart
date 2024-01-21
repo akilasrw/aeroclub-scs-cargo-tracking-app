@@ -1,5 +1,7 @@
 import 'package:Cargo_Tracker/data/local/local_storage.dart';
 import 'package:Cargo_Tracker/data/remote/rest_api.dart';
+import 'package:Cargo_Tracker/domain/data/airport.dart';
+import 'package:Cargo_Tracker/domain/data/cargo_agent.dart';
 import 'package:Cargo_Tracker/domain/data/login_request.dart';
 import 'package:Cargo_Tracker/domain/data/login_response.dart';
 import 'package:Cargo_Tracker/domain/repository/repository.dart';
@@ -139,6 +141,17 @@ class RepositoryImpl implements Repository {
   @override
   Future<void> saveToken(LoginResponse tokenData) {
     return _localStorage!.saveToken(tokenData);
+  }
+
+  @override
+  Future<List<Airport>?> getAirports() {
+    return _restClient!.getAirports();
+  }
+
+  @override
+  Future<List<CargoAgent>?> getCargoAgents() {
+    return _restClient!.getCargoAgents();
+
   }
 
 

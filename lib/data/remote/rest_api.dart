@@ -1,3 +1,5 @@
+import 'package:Cargo_Tracker/domain/data/airport.dart';
+import 'package:Cargo_Tracker/domain/data/cargo_agent.dart';
 import 'package:Cargo_Tracker/domain/data/login_request.dart';
 import 'package:Cargo_Tracker/domain/data/login_response.dart';
 import 'package:dio/dio.dart';
@@ -17,4 +19,12 @@ abstract class RestClient {
 
   @POST("/api/v1/User/mobile/refresh-token")
   Future<LoginResponse> refreshToken(@Body() String refreshToken);
+
+  @GET("/api/v1/airport/getSelectList")
+  Future<List<Airport>?> getAirports();
+
+  @GET("/api/v1/CargoAgent/GetList")
+  Future<List<CargoAgent>?> getCargoAgents();
+
+
 }
