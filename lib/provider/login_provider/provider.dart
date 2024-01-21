@@ -25,6 +25,8 @@ class LoginProviderProvider extends BaseProvider {
       }
     }catch(e){
       print(e);
+      setLoading(false);
+      return Future.value(false);
     }
 
     setLoading(false);

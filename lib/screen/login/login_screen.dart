@@ -182,6 +182,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                                 passwordController.text
                                                     .trim())) {
                                               navigateToNextPage();
+                                            }else{
+                                              showAlert("Please insert the correct username and password!");
                                             }
                                           }
                                         },
@@ -207,6 +209,26 @@ class _LoginScreenState extends State<LoginScreen> {
           }),
         ),
       ),
+    );
+  }
+
+  void showAlert(String msg) {
+    showDialog(
+        context: context,
+        builder : (BuildContext context){
+          return AlertDialog(
+            title: Text("LOGIN FAILED!"),
+            content: Text(msg,style: TextStyle(color: Colors.black45),),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        }
     );
   }
 
