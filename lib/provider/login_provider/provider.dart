@@ -13,17 +13,21 @@ class LoginProviderProvider extends BaseProvider {
 
   Future<bool> login(String userName,String password) async {
     try{
+      setLoading(true);
      var response = await repository.loginUser(LoginRequest(username: userName, password: password));
       if(response.jwtToken != null) {
         if (kDebugMode) {
           print('token: ${response.refreshToken}');
         }
         await repository.saveToken(response);
+        setLoading(false);
         return Future.value(true);
       }
     }catch(e){
       print(e);
     }
+
+    setLoading(false);
     return Future.value(false);
   }
 

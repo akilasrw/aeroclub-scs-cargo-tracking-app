@@ -158,29 +158,40 @@ class _LoginScreenState extends State<LoginScreen> {
                                     SizedBox(
                                       height: heightSpacingFactor,
                                     ),
-                                    ElevatedButton(
-                                      key: UniqueKey(),
-                                      child: const Text(
-                                        'Login',
-                                        style: TextStyle(
-                                            fontSize: 24, color: Colors.black),
-                                      ),
-                                      onPressed: () async {
-                                        if (_formKey.currentState != null &&
-                                            _formKey.currentState!.validate()) {
-                                          if (await provider.login(
-                                              userNameController.text.trim(),
-                                              passwordController.text.trim())) {
-                                            navigateToNextPage();
+                                    Consumer<LoginProviderProvider>(
+                                        builder: (context, data, child) {
+                                      if (data.isLoading) {
+                                        return Center(
+                                          child: CircularProgressIndicator(),
+                                        );
+                                      }
+                                      return ElevatedButton(
+                                        key: UniqueKey(),
+                                        child: const Text(
+                                          'Login',
+                                          style: TextStyle(
+                                              fontSize: 24,
+                                              color: Colors.black),
+                                        ),
+                                        onPressed: () async {
+                                          if (_formKey.currentState != null &&
+                                              _formKey.currentState!
+                                                  .validate()) {
+                                            if (await provider.login(
+                                                userNameController.text.trim(),
+                                                passwordController.text
+                                                    .trim())) {
+                                              navigateToNextPage();
+                                            }
                                           }
-                                        }
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.blue,
-                                        minimumSize:
-                                            const Size.fromHeight(50), // NEW
-                                      ),
-                                    )
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.blue,
+                                          minimumSize:
+                                              const Size.fromHeight(50), // NEW
+                                        ),
+                                      );
+                                    }),
                                   ],
                                 ),
                               ),

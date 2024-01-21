@@ -17,8 +17,8 @@ void main() async {
       GetIt.I.registerSingleton<MessageService>(MessageService());
       GetIt.I.registerSingleton<AppRouter>(AppRouter());
       GetIt.I.registerSingleton<Repository>(RepositoryImpl(
-        // baseURL: 'https://aeroclub-skytechcargo-app-dev-002.azurewebsites.net/',
-        baseURL: 'https://localhost:7130',
+        baseURL: 'https://aeroclub-skytechcargo-app-dev-002.azurewebsites.net/',
+        // baseURL: 'https://localhost:7130',
       ));
       runApp(const App());
     },

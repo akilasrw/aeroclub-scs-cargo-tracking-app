@@ -34,83 +34,83 @@ class RepositoryImpl implements Repository {
   factory RepositoryImpl({required String baseURL}) {
     _baseURL = baseURL;
     _tokenRefreshRestClient = RestClient(Dio(baseOptions), baseUrl: baseURL);
-    // dio.interceptors.add(InterceptorsWrapper(
-    //   onRequest: (options, handler) async {
-    //     var token = await _localStorage!.getAuthToken();
-    //     if (token != null) {
-    //       if (kDebugMode) {
-    //         print('token $token');
-    //       }
-    //       options.headers["Authorization"] = "Bearer " + token;
-    //     }
-    //     return handler.next(options);
-    //   },
-    //   onResponse: (response, handler) {
-    //     return handler.next(response);
-    //   },
-    //   onError: (DioError error, handler) async {
-    //     if (error.response != null) {
-    //       var router = GetIt.I<AppRouter>();
-    //       try {
-    //         if (error.response?.statusCode == 401 ||
-    //             error.response?.statusCode == 403) {
-    //           var options = error.response?.requestOptions;
-    //           var _token = await _localStorage!.getAuthToken();
-    //           var _refreshToken = await _localStorage!.getRefreshToken();
-    //           var updatedToken = await _tokenRefreshRestClient!.refreshToken(_refreshToken!);
-    //           if (updatedToken.jwtToken != null && updatedToken.jwtToken!.isNotEmpty) {
-    //             options?.headers["Authorization"] =
-    //             "Bearer ${updatedToken.jwtToken}";
-    //             var result = await _localStorage!.saveToken(updatedToken);
-    //             if (kDebugMode) {
-    //               print('refresh token $_refreshToken');
-    //               print('old token $_token');
-    //               print(
-    //                   'updated token ${updatedToken.jwtToken} token updated !');
-    //             }
-    //           } else {
-    //             router.navigate(const LoginRoute());
-    //           }
-    //
-    //           final opts = Options(
-    //               method: options?.method,
-    //               headers: options?.headers,
-    //               sendTimeout: options?.sendTimeout,
-    //               receiveTimeout: options?.receiveTimeout,
-    //               extra: options?.extra,
-    //               responseType: options?.responseType,
-    //               contentType: options?.contentType,
-    //               validateStatus: options?.validateStatus,
-    //               receiveDataWhenStatusError:
-    //               options?.receiveDataWhenStatusError,
-    //               followRedirects: options?.followRedirects,
-    //               maxRedirects: options?.maxRedirects,
-    //               requestEncoder: options?.requestEncoder,
-    //               responseDecoder: options?.responseDecoder,
-    //               listFormat: options?.listFormat);
-    //           var dio = Dio(baseOptions);
-    //           final cloneReq = await dio.request(
-    //             '${options?.baseUrl}${options!.path}',
-    //             options: opts,
-    //             data: options.data,
-    //             queryParameters: options.queryParameters,
-    //           );
-    //           return handler.resolve(cloneReq);
-    //         } else {
-    //           return handler.next(error);
-    //         }
-    //       } catch (e) {
-    //         if (kDebugMode) {
-    //           print(e);
-    //         }
-    //         await _localStorage?.logOutUser();
-    //         router.navigate(const LoginRoute());
-    //       }
-    //     } else {
-    //       return handler.next(error);
-    //     }
-    //   },
-    // ));
+    dio.interceptors.add(InterceptorsWrapper(
+      onRequest: (options, handler) async {
+        var token = await _localStorage!.getAuthToken();
+        if (token != null) {
+          if (kDebugMode) {
+            print('token $token');
+          }
+          options.headers["Authorization"] = "Bearer " + token;
+        }
+        return handler.next(options);
+      },
+      onResponse: (response, handler) {
+        return handler.next(response);
+      },
+      onError: (DioError error, handler) async {
+        if (error.response != null) {
+          var router = GetIt.I<AppRouter>();
+          try {
+            if (error.response?.statusCode == 401 ||
+                error.response?.statusCode == 403) {
+              var options = error.response?.requestOptions;
+              var _token = await _localStorage!.getAuthToken();
+              var _refreshToken = await _localStorage!.getRefreshToken();
+              var updatedToken = await _tokenRefreshRestClient!.refreshToken(_refreshToken!);
+              if (updatedToken.jwtToken != null && updatedToken.jwtToken!.isNotEmpty) {
+                options?.headers["Authorization"] =
+                "Bearer ${updatedToken.jwtToken}";
+                var result = await _localStorage!.saveToken(updatedToken);
+                if (kDebugMode) {
+                  print('refresh token $_refreshToken');
+                  print('old token $_token');
+                  print(
+                      'updated token ${updatedToken.jwtToken} token updated !');
+                }
+              } else {
+                router.navigate(const LoginRoute());
+              }
+
+              final opts = Options(
+                  method: options?.method,
+                  headers: options?.headers,
+                  sendTimeout: options?.sendTimeout,
+                  receiveTimeout: options?.receiveTimeout,
+                  extra: options?.extra,
+                  responseType: options?.responseType,
+                  contentType: options?.contentType,
+                  validateStatus: options?.validateStatus,
+                  receiveDataWhenStatusError:
+                  options?.receiveDataWhenStatusError,
+                  followRedirects: options?.followRedirects,
+                  maxRedirects: options?.maxRedirects,
+                  requestEncoder: options?.requestEncoder,
+                  responseDecoder: options?.responseDecoder,
+                  listFormat: options?.listFormat);
+              var dio = Dio(baseOptions);
+              final cloneReq = await dio.request(
+                '${options?.baseUrl}${options!.path}',
+                options: opts,
+                data: options.data,
+                queryParameters: options.queryParameters,
+              );
+              return handler.resolve(cloneReq);
+            } else {
+              return handler.next(error);
+            }
+          } catch (e) {
+            if (kDebugMode) {
+              print(e);
+            }
+            await _localStorage?.logOutUser();
+            router.navigate(const LoginRoute());
+          }
+        } else {
+          return handler.next(error);
+        }
+      },
+    ));
     _localStorage = LocalStorage();
     _restClient = RestClient(dio, baseUrl: baseURL);
     return repository;
