@@ -1,4 +1,5 @@
 import 'package:Cargo_Tracker/domain/data/airport.dart';
+import 'package:Cargo_Tracker/domain/data/booking.dart';
 import 'package:Cargo_Tracker/domain/data/cargo_agent.dart';
 import 'package:Cargo_Tracker/domain/data/login_request.dart';
 import 'package:Cargo_Tracker/domain/data/login_response.dart';
@@ -25,6 +26,9 @@ abstract class RestClient {
 
   @GET("/api/v1/CargoAgent/GetList")
   Future<List<CargoAgent>?> getCargoAgents();
+
+  @POST("/api/v1/Package/CreateTruckBookingAWBAndPackages")
+  Future<bool> createTruckBookingAWBAndPackages(@Body() Booking bookingModel);
 
 
 }

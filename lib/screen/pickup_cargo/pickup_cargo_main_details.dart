@@ -229,14 +229,34 @@ class _PickUpCargoMainDetailsState extends State<PickUpCargoMainDetailsPage> {
                                           const Size.fromHeight(50), // NEW
                                     ),
                                     onPressed: () {
-                                      // TODO
+                                      if (truckController.text.isEmpty) {
+                                        showAlert("Please add truck number");
+                                        return;
+                                      }
+                                      if (awbController.text.isEmpty) {
+                                        showAlert("Please awb number");
+                                        return;
+                                      }
+                                      if (originAirport != null) {
+                                        showAlert("Please airport");
+                                        return;
+                                      }
+                                      if (desitnationAirport != null) {
+                                        showAlert("Please destination");
+                                        return;
+                                      }
+                                      if (cargoAgent != null) {
+                                        showAlert("Please cargo agent");
+                                        return;
+                                      }
+
                                       var booking = Booking(
-                                          awbController.text,
-                                          1,
-                                          originAirport?.id,
-                                          desitnationAirport?.id,
-                                          truckController.text,
-                                          null);
+                                          awbTrackingNumber:
+                                              awbController.text.toString(),
+                                          origin: originAirport?.id,
+                                          destination: desitnationAirport?.id,
+                                          truckNo: truckController.text,
+                                          cargoAgent: cargoAgent?.appUserId,packages: null);
                                       context.router.push(
                                           ScanCargoRoute(booking: booking));
                                     },
@@ -249,5 +269,25 @@ class _PickUpCargoMainDetailsState extends State<PickUpCargoMainDetailsPage> {
                         },
                       );
                     }))));
+  }
+
+  void showAlert(String msg) {
+    showDialog(
+        context: context,
+        builder : (BuildContext context){
+          return AlertDialog(
+            title: Text("ERROR!"),
+            content: Text(msg),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        }
+    );
   }
 }

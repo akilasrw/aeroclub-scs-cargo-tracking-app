@@ -1,6 +1,7 @@
 import 'package:Cargo_Tracker/data/local/local_storage.dart';
 import 'package:Cargo_Tracker/data/remote/rest_api.dart';
 import 'package:Cargo_Tracker/domain/data/airport.dart';
+import 'package:Cargo_Tracker/domain/data/booking.dart';
 import 'package:Cargo_Tracker/domain/data/cargo_agent.dart';
 import 'package:Cargo_Tracker/domain/data/login_request.dart';
 import 'package:Cargo_Tracker/domain/data/login_response.dart';
@@ -152,6 +153,11 @@ class RepositoryImpl implements Repository {
   Future<List<CargoAgent>?> getCargoAgents() {
     return _restClient!.getCargoAgents();
 
+  }
+
+  @override
+  Future<bool> createTruckBookingAWBAndPackages(Booking bookingModel) {
+    return _restClient!.createTruckBookingAWBAndPackages(bookingModel);
   }
 
 
