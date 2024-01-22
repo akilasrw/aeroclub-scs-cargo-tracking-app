@@ -82,7 +82,7 @@ class _ScanCargoState extends State<ScanCargoPage> {
                                         if (res is String) {
                                           scanCount++;
                                           cargoController.text = res;
-                                          CargoBookingItem bookingItem = CargoBookingItem(1, res);
+                                          CargoBookingItem bookingItem =  CargoBookingItem(packageItemStatus: 1,packageRefNumber: res);
                                           bookingItems.add(bookingItem);
                                         }
                                       });
@@ -110,7 +110,7 @@ class _ScanCargoState extends State<ScanCargoPage> {
                           ),
                           onPressed: () {
                             Booking? booking = widget.booking;
-                            booking?.packageItems = bookingItems;
+                            // booking?.packageItems = bookingItems;
                           },
                           child: const Text(
                             'Finalize Truck',

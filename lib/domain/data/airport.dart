@@ -1,17 +1,15 @@
 import 'package:json_annotation/json_annotation.dart';
 
+part 'airport.g.dart';
+
 @JsonSerializable()
 class Airport {
   String id;
   String value;
 
-  Airport(this.id,
-    this.value);
+  Airport({required this.id,required this.value});
 
-  factory Airport.fromMap(Map<String, dynamic> json) {
-    return Airport(
-      json['id'],
-      json['value']
-    );
-  }
+  factory Airport.fromJson(Map<String, dynamic> json) =>
+      _$AirportFromJson(json);
+  Map<String, dynamic> toJson() => _$AirportToJson(this);
 }

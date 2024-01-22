@@ -110,8 +110,8 @@ class _PickUpCargoMainDetailsState extends State<HandoverToWarehouseMainDetailsP
                             minimumSize: const Size.fromHeight(50), // NEW
                           ),
                           onPressed: () {
-                            var booking = Booking(awbController.text,1,null,null,truckController.text,null);
-                            context.router.push(ScanAcceptCargoRoute(booking: booking));
+                            // var booking = Booking(awbController.text,1,null,null,truckController.text,null);
+                            // context.router.push(ScanAcceptCargoRoute(booking: booking));
                           },
                           child: const Text(
                             'Submit',

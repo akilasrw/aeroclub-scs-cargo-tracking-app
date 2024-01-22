@@ -1,17 +1,18 @@
 import 'package:json_annotation/json_annotation.dart';
 
+part 'cargo_booking_item.g.dart';
+
 @JsonSerializable()
 class CargoBookingItem {
   int packageItemStatus;
   String packageRefNumber;
 
-  CargoBookingItem(this.packageItemStatus,
-      this.packageRefNumber);
+  CargoBookingItem({required this.packageItemStatus, required this.packageRefNumber});
 
-  factory CargoBookingItem.fromMap(Map<String, dynamic> json) {
-    return CargoBookingItem(
-        json['packageItemStatus'],
-        json['packageRefNumber']
-    );
-  }
+
+
+  factory CargoBookingItem.fromJson(Map<String, dynamic> json) =>
+      _$CargoBookingItemFromJson(json);
+
+  Map<String, dynamic> toJson() => _$CargoBookingItemToJson(this);
 }
