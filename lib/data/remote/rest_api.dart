@@ -1,13 +1,21 @@
 import 'package:Cargo_Tracker/domain/data/airport.dart';
 import 'package:Cargo_Tracker/domain/data/booking.dart';
+import 'package:Cargo_Tracker/domain/data/booking_status.dart';
 import 'package:Cargo_Tracker/domain/data/cargo_agent.dart';
+import 'package:Cargo_Tracker/domain/data/flight.dart';
+import 'package:Cargo_Tracker/domain/data/load_uld.dart';
+import 'package:Cargo_Tracker/domain/data/load_uld_to_flight_request.dart';
 import 'package:Cargo_Tracker/domain/data/login_request.dart';
 import 'package:Cargo_Tracker/domain/data/login_response.dart';
+import 'package:Cargo_Tracker/domain/data/uld.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 import 'package:json_annotation/json_annotation.dart';
 import 'package:retrofit/retrofit.dart';
+
+import '../../domain/data/base_response.dart';
+import '../../domain/data/uld_flight_schedule.dart';
 
 part 'rest_api.g.dart';
 
@@ -28,7 +36,23 @@ abstract class RestClient {
   Future<List<CargoAgent>?> getCargoAgents();
 
   @POST("/api/v1/Package/CreateTruckBookingAWBAndPackages")
-  Future<bool> createTruckBookingAWBAndPackages(@Body() Booking bookingModel);
+  Future<BaseResponse> createTruckBookingAWBAndPackages(@Body() Booking bookingModel);
 
+  @PUT("/api/v1/Package/UpdateStatusByPackage")
+  Future<BaseResponse> updateStatusByPackage(@Body() BookingStatus bookingStatus);
 
+  @GET("/api/v1/Flight/getSelectList")
+  Future<List<Flight>?> getFlights();
+
+  @POST("/api/v1/Package/CreateFlightScheduleULDandUpdateStatus")
+  Future<BaseResponse> createFlightScheduleULDandUpdateStatus(@Body() LoadULD loadULD);
+
+  @GET("/api/v1/ULD/ULDByFlightAndDate")
+  Future<List<ULD>?> getFlightsULDs(@Body() ULDFlightSchedule uldFlightSchedule);
+
+  @POST("/api/v1/Package/UpdatePackageAndBookingStatusFromULD")
+  Future<BaseResponse> UpdatePackageAndBookingStatusFromULD(@Body() LoadULDtoFlightRequest loadULD);
+
+  @POST("/api/v1/Package/UpdateULDAndPackageStatus")
+  Future<BaseResponse> updateULDAndPackageStatus(@Body() LoadULD loadULD);
 }

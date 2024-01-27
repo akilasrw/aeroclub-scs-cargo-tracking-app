@@ -4,10 +4,10 @@ part 'cargo_booking_item.g.dart';
 
 @JsonSerializable()
 class CargoBookingItem {
-  int packageItemStatus;
-  String packageRefNumber;
+  int status;
+  String packageItemId;
 
-  CargoBookingItem({required this.packageItemStatus, required this.packageRefNumber});
+  CargoBookingItem({required this.status, required this.packageItemId});
 
 
 

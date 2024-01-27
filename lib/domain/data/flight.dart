@@ -1,23 +1,17 @@
 import 'package:json_annotation/json_annotation.dart';
 
+part 'flight.g.dart';
+
 @JsonSerializable()
 class Flight {
   String id;
-  String flightName;
-  String? originAirportCode;
-  String? destinationAirportCode;
+  String value;
 
   Flight(this.id,
-      this.flightName,
-      this.originAirportCode,
-      this.destinationAirportCode);
+      this.value);
 
-  factory Flight.fromMap(Map<String, dynamic> json) {
-    return Flight(
-        json['id'],
-        json['flightName'],
-        json['originAirportCode'],
-        json['destinationAirportCode']
-    );
-  }
+  factory Flight.fromJson(Map<String, dynamic> json) =>
+      _$FlightFromJson(json);
+
+  Map<String, dynamic> toJson() => _$FlightToJson(this);
 }

@@ -8,14 +8,16 @@ class Booking {
 
   String truckNo;
   String? cargoAgent;
+  String? cargoAgentAppUserId;
   String? origin;
   String? destination;
-  String? awbTrackingNumber;
-  List<CargoBookingItem>? packages;
+  int? awbTrackingNumber;
+  List<String>? packages;
 
   Booking({
     required this.truckNo,
     required this.cargoAgent,
+    required this.cargoAgentAppUserId,
     required this.origin,
     required this.destination,
     required this.awbTrackingNumber,

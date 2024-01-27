@@ -3,6 +3,8 @@ import 'package:Cargo_Tracker/screen/pickup_cargo/pickup_cargo_main_details.dart
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
+import 'home_drawer.dart';
+
 @RoutePage()
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -14,6 +16,7 @@ class HomePage extends StatelessWidget {
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
           title: Text("Home"),
         ),
+    drawer: HomeDrawer(),
         body: Center(
           child : SingleChildScrollView(
               child: Container(
@@ -74,7 +77,7 @@ class HomePage extends StatelessWidget {
                           context.router.push(UpdateOffloadedCargoRoute());
                         },
                         child: const Text(
-                          'Update Offload Cargo',
+                          'Offload / Return Cargo',
                           style: TextStyle(fontSize: 24, color: Colors.black),
                         )),const SizedBox(
                       height: 20,

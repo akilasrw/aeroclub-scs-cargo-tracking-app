@@ -2,15 +2,23 @@ import 'package:Cargo_Tracker/data/local/local_storage.dart';
 import 'package:Cargo_Tracker/data/remote/rest_api.dart';
 import 'package:Cargo_Tracker/domain/data/airport.dart';
 import 'package:Cargo_Tracker/domain/data/booking.dart';
+import 'package:Cargo_Tracker/domain/data/booking_status.dart';
 import 'package:Cargo_Tracker/domain/data/cargo_agent.dart';
+import 'package:Cargo_Tracker/domain/data/flight.dart';
+import 'package:Cargo_Tracker/domain/data/load_uld.dart';
 import 'package:Cargo_Tracker/domain/data/login_request.dart';
 import 'package:Cargo_Tracker/domain/data/login_response.dart';
+import 'package:Cargo_Tracker/domain/data/uld.dart';
 import 'package:Cargo_Tracker/domain/repository/repository.dart';
 import 'package:Cargo_Tracker/router/router.dart';
 import 'package:Cargo_Tracker/router/router.gr.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
+
+import '../domain/data/base_response.dart';
+import '../domain/data/load_uld_to_flight_request.dart';
+import '../domain/data/uld_flight_schedule.dart';
 
 class RepositoryImpl implements Repository {
   static final RepositoryImpl repository = RepositoryImpl._internal();
@@ -156,9 +164,36 @@ class RepositoryImpl implements Repository {
   }
 
   @override
-  Future<bool> createTruckBookingAWBAndPackages(Booking bookingModel) {
+  Future<BaseResponse> createTruckBookingAWBAndPackages(Booking bookingModel) {
     return _restClient!.createTruckBookingAWBAndPackages(bookingModel);
   }
 
+  @override
+  Future<BaseResponse> updateStatusByPackage(BookingStatus bookingStatusModel) {
+    return _restClient!.updateStatusByPackage(bookingStatusModel);
+  }
 
+  @override
+  Future<List<Flight>?> getFlights() {
+    return _restClient!.getFlights();
+  }
+
+  @override
+  Future<BaseResponse> createFlightScheduleULDandUpdateStatus(LoadULD loadULD) {
+    return _restClient!.createFlightScheduleULDandUpdateStatus(loadULD);
+  }
+
+  @override
+  Future<List<ULD>?> getFlightsULDs(ULDFlightSchedule uldFlightSchedule) {
+    return _restClient!.getFlightsULDs(uldFlightSchedule);
+  }
+
+  @override
+  Future<BaseResponse> updatePackageAndBookingStatusFromULD(LoadULDtoFlightRequest loadULDtoFlightRequest){
+    return _restClient!.UpdatePackageAndBookingStatusFromULD(loadULDtoFlightRequest);
+  }
+  @override
+  Future<BaseResponse> completeUnpackULD(LoadULD loadULD){
+    return _restClient!.updateULDAndPackageStatus(loadULD);
+  }
 }

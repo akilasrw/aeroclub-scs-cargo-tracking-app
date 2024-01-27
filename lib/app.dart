@@ -40,7 +40,7 @@ class _AppState extends State<App> {
             routerDelegate: _appRouter.delegate(),
             routeInformationParser: _appRouter.defaultRouteParser(),
             title: 'Price Tracker',
-            theme: AppTheme().buildTheme(),
+           // theme: AppTheme().buildTheme(),
           );
         },
       ),

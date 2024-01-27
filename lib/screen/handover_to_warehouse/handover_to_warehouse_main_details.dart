@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:Cargo_Tracker/domain/data/booking.dart';
+import 'package:Cargo_Tracker/domain/data/booking_status.dart';
 import 'package:Cargo_Tracker/router/router.gr.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
@@ -34,6 +35,7 @@ class _PickUpCargoMainDetailsState extends State<HandoverToWarehouseMainDetailsP
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       TextField(
+                        style: TextStyle(color: Colors.black45),
                         decoration: InputDecoration(
                           border: OutlineInputBorder(
                               borderSide: BorderSide(color: Colors.teal)),
@@ -51,6 +53,7 @@ class _PickUpCargoMainDetailsState extends State<HandoverToWarehouseMainDetailsP
                             Expanded(
                                 flex: 8,
                                 child: TextField(
+                                    style: TextStyle(color: Colors.black45),
                                     controller: awbController,
                                     decoration: const InputDecoration(
                                       border: OutlineInputBorder(
@@ -110,13 +113,47 @@ class _PickUpCargoMainDetailsState extends State<HandoverToWarehouseMainDetailsP
                             minimumSize: const Size.fromHeight(50), // NEW
                           ),
                           onPressed: () {
-                            // var booking = Booking(awbController.text,1,null,null,truckController.text,null);
-                            // context.router.push(ScanAcceptCargoRoute(booking: booking));
+                            if (truckController.text.isEmpty) {
+                              showAlert("Please add truck number");
+                              return;
+                            }
+                            if (awbController.text.isEmpty) {
+                              showAlert("Please add awb number");
+                              return;
+                            }
+                             var bookingStatus = BookingStatus(
+                               awbNumber:
+                               int.parse(awbController.text),
+                               truckNo: truckController.text,
+                               status: 30,
+                               itemList: null
+                             );
+                             context.router.push(ScanAcceptCargoRoute(bookingStatus: bookingStatus));
                           },
                           child: const Text(
                             'Submit',
                             style: TextStyle(fontSize: 24, color: Colors.black),
                           ))
                     ]))));
+  }
+
+  void showAlert(String msg) {
+    showDialog(
+        context: context,
+        builder : (BuildContext context){
+          return AlertDialog(
+            title: Text("ERROR!"),
+            content: Text(msg),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        }
+    );
   }
 }

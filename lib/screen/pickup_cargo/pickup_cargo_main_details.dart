@@ -56,6 +56,7 @@ class _PickUpCargoMainDetailsState extends State<PickUpCargoMainDetailsPage> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 TextField(
+                          style: TextStyle(color: Colors.black45),
                                   decoration: const InputDecoration(
                                     border: OutlineInputBorder(
                                         borderSide:
@@ -167,6 +168,7 @@ class _PickUpCargoMainDetailsState extends State<PickUpCargoMainDetailsPage> {
                                           flex: 8,
                                           child: TextField(
                                               controller: awbController,
+                                              style: TextStyle(color: Colors.black45),
                                               decoration: const InputDecoration(
                                                 border: OutlineInputBorder(
                                                     borderSide: BorderSide(
@@ -237,26 +239,28 @@ class _PickUpCargoMainDetailsState extends State<PickUpCargoMainDetailsPage> {
                                         showAlert("Please awb number");
                                         return;
                                       }
-                                      if (originAirport != null) {
+                                      if (originAirport == null) {
                                         showAlert("Please airport");
                                         return;
                                       }
-                                      if (desitnationAirport != null) {
+                                      if (desitnationAirport == null) {
                                         showAlert("Please destination");
                                         return;
                                       }
-                                      if (cargoAgent != null) {
+                                      if (cargoAgent == null) {
                                         showAlert("Please cargo agent");
                                         return;
                                       }
 
                                       var booking = Booking(
                                           awbTrackingNumber:
-                                              awbController.text.toString(),
+                                              int.parse(awbController.text),
                                           origin: originAirport?.id,
                                           destination: desitnationAirport?.id,
                                           truckNo: truckController.text,
-                                          cargoAgent: cargoAgent?.appUserId,packages: null);
+                                          cargoAgent: cargoAgent?.id,
+                                          cargoAgentAppUserId : cargoAgent?.appUserId,
+                                          packages: null);
                                       context.router.push(
                                           ScanCargoRoute(booking: booking));
                                     },
