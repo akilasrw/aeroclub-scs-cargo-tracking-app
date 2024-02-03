@@ -7,6 +7,8 @@ abstract class LocalHelper {
   Future<void> saveToken(LoginResponse tokenData);
   Future<String?> getAuthToken();
   Future<String?> getRefreshToken();
-  // Future<String> getUserId();
+  Future<void> saveInSharedPreferences(String key, String value);
+  Future<String?> getSharedPreferencesValue(String key);
+// Future<String> getUserId();
   // UserData getUserDetailsModel();
 }

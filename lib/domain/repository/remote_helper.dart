@@ -12,6 +12,8 @@ import 'package:Cargo_Tracker/domain/data/login_response.dart';
 import 'package:Cargo_Tracker/domain/data/uld.dart';
 
 import '../data/flight.dart';
+import '../data/package_filter/package_filter_req.dart';
+import '../data/package_filter/package_filter_res.dart';
 import '../data/uld_flight_schedule.dart';
 
 abstract class RemoteHelper {
@@ -26,4 +28,5 @@ abstract class RemoteHelper {
   Future<List<ULD>?> getFlightsULDs(ULDFlightSchedule uldFlightSchedule);
   Future<BaseResponse> updatePackageAndBookingStatusFromULD(LoadULDtoFlightRequest loadULDtoFlightRequest);
   Future<BaseResponse> completeUnpackULD(LoadULD loadULD);
+  Future<List<PackageFilterRes>?> getPackageListByAWB(PackageFilterReq packageFilterReq);
 }

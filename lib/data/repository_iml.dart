@@ -18,6 +18,8 @@ import 'package:get_it/get_it.dart';
 
 import '../domain/data/base_response.dart';
 import '../domain/data/load_uld_to_flight_request.dart';
+import '../domain/data/package_filter/package_filter_req.dart';
+import '../domain/data/package_filter/package_filter_res.dart';
 import '../domain/data/uld_flight_schedule.dart';
 
 class RepositoryImpl implements Repository {
@@ -195,5 +197,20 @@ class RepositoryImpl implements Repository {
   @override
   Future<BaseResponse> completeUnpackULD(LoadULD loadULD){
     return _restClient!.updateULDAndPackageStatus(loadULD);
+  }
+
+  @override
+  Future<void> saveInSharedPreferences(String key, String value) {
+    return _localStorage!.saveInSharedPreferences(key,value);
+  }
+
+  @override
+  Future<String?> getSharedPreferencesValue(String key) {
+    return _localStorage!.getSharedPreferencesValue(key);
+  }
+
+  @override
+  Future<List<PackageFilterRes>?> getPackageListByAWB(PackageFilterReq packageFilterReq) {
+    return _restClient!.getPackageListByAWB(packageFilterReq);
   }
 }

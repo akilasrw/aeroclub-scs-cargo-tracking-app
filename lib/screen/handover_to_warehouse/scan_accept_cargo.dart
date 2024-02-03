@@ -10,6 +10,9 @@ import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 
 import '../../domain/data/booking_status.dart';
+import '../../domain/data/package_filter/package_filter_res.dart';
+import '../../router/router.gr.dart';
+import '../../utils/app_utils.dart';
 
 @RoutePage()
 class ScanAcceptCargoPage extends StatefulWidget {
@@ -26,32 +29,7 @@ class _ScanCargoState extends State<ScanAcceptCargoPage> {
   int originalPackageCount = 0;
   final TextEditingController cargoController = TextEditingController();
   List<CargoBookingItem> bookingItems = [];
-  List<String> scannedPackagelist = List.empty();
 
-  @override
-  void initState() {
-    super.initState();
-    getScannedPackages();
-  }
-
-  Future<List<String>?> getScannedPackages() async {
-    try {
-      var url = Uri.parse(
-          "https://aeroclub-skytechcargo-app-dev-002.azurewebsites.net/api/v1/CargoAgent/GetList");
-      var response = await http.get(url);
-      if (response.statusCode == 200) {
-        final parsed = json.decode(response.body).cast<Map<String, dynamic>>();
-        setState(() {
-          scannedPackagelist = parsed.map<String>().toList();
-          originalPackageCount = scannedPackagelist.length;
-        });
-        return scannedPackagelist;
-      }
-    } catch (e) {
-      throw Exception('Unable to fetch products from the REST API');
-    }
-    return null;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +43,7 @@ class _ScanCargoState extends State<ScanAcceptCargoPage> {
                 margin: const EdgeInsets.all(30.0),
                 child: ChangeNotifierProvider(
                     create: (BuildContext context) =>
-                        HandoverWarehouseProvider()..initProvider(),
+                        HandoverWarehouseProvider()..loadScannedPackages(widget.bookingStatus.awbNumber!),
                     builder: (context, child) {
                       return Consumer<HandoverWarehouseProvider>(
                           builder: (da, data, child) {
@@ -74,11 +52,11 @@ class _ScanCargoState extends State<ScanAcceptCargoPage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                  "Original Package Count : $originalPackageCount",
+                                  "Original Package Count : ${data.bookedPackageItems.length}",
                                   style: TextStyle(
                                       color: Colors.grey[800],
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 30)),
+                                      fontSize: 25)),
                               SizedBox(
                                 height: 30,
                               ),
@@ -159,6 +137,10 @@ class _ScanCargoState extends State<ScanAcceptCargoPage> {
                               const SizedBox(
                                 height: 40,
                               ),
+                              data.isLoading ?
+                              const Center(
+                                child: CircularProgressIndicator(),
+                              ) :
                               ElevatedButton(
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.blue,
@@ -166,9 +148,8 @@ class _ScanCargoState extends State<ScanAcceptCargoPage> {
                                         const Size.fromHeight(50), // NEW
                                   ),
                                   onPressed: () {
-                                    BookingStatus? booking = widget.bookingStatus;
-                                     booking?.itemList = bookingItems;
-                                    data.handoverCargo(booking);
+                                    //validateScannedCargo(data.bookedPackageItems);
+                                    onSubmit(data);
                                   },
                                   child: const Text(
                                     'Done',
@@ -178,5 +159,40 @@ class _ScanCargoState extends State<ScanAcceptCargoPage> {
                             ]);
                       });
                     }))));
+  }
+
+  Future<void> onSubmit(HandoverWarehouseProvider data) async {
+    BookingStatus? booking = widget.bookingStatus;
+    booking?.itemList = bookingItems;
+    data.handoverCargo(booking);
+    var isPacked = await data.handoverCargo(booking);
+    if(isPacked){
+      showAlert("Success", "Cargo handover successfully",redirectToHome);
+    }
+    else{
+      showAlert("Error", "Something went wrong", onFailMethod);
+    }
+  }
+
+  void showAlert(String title, String msg , Function() function){
+    AppUtils.showAlert(context, title, msg,function);
+  }
+  void redirectToHome(){
+    context.router.push(const HomeRoute());
+  }
+
+  void onFailMethod(){
+    Navigator.of(context).pop();
+  }
+
+  void validateScannedCargo(List<PackageFilterRes> bookedPackageItems){
+    if(bookedPackageItems.length != bookingItems.length){
+
+    }
+    for(PackageFilterRes package in bookedPackageItems){
+      if(bookingItems.contains(package.packageRefNumber)){
+
+      }
+    }
   }
 }

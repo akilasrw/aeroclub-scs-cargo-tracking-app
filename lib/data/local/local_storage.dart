@@ -46,4 +46,17 @@ class LocalStorage extends LocalHelper {
     return Future.value(true);
   }
 
+  @override
+  Future<void> saveInSharedPreferences(String key, String value) async {
+     await _sharedPreferences?.setString(
+         key, value);
+     return Future.value(true);
+  }
+
+  @override
+  Future<String?> getSharedPreferencesValue(String key) async {
+    var value =
+    _sharedPreferences?.getString(key);
+    return value;
+  }
 }

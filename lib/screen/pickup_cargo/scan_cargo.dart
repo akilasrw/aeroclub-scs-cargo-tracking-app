@@ -1,10 +1,13 @@
 import 'package:Cargo_Tracker/domain/data/booking.dart';
 import 'package:Cargo_Tracker/domain/data/cargo_booking_item.dart';
 import 'package:Cargo_Tracker/screen/pickup_cargo/provider.dart';
+import 'package:Cargo_Tracker/utils/app_utils.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
 import 'package:provider/provider.dart';
+
+import '../../router/router.gr.dart';
 
 @RoutePage()
 class ScanCargoPage extends StatefulWidget {
@@ -96,11 +99,11 @@ class _ScanCargoState extends State<ScanCargoPage> {
                                                         const SimpleBarcodeScannerPage(),
                                                       ));
                                                   setState(() {
-                                                    if (res is String) {
+                                                    if (res is String && res != "-1"
+                                                        && !bookingItems.contains(res)) {
                                                       scanCount++;
                                                       cargoController.text =
                                                           res;
-                                                      //CargoBookingItem bookingItem =  CargoBookingItem(packageItemStatus: 1,packageRefNumber: res);
                                                       bookingItems.add(res);
                                                     }
                                                   });
@@ -122,6 +125,23 @@ class _ScanCargoState extends State<ScanCargoPage> {
                                   const SizedBox(
                                     height: 40,
                                   ),
+                                  ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.blue,
+                                        minimumSize: const Size.fromHeight(
+                                            50), // NEW
+                                      ),
+                                      onPressed: () {
+                                        continuousScanning();
+                                      },
+                                      child: const Text(
+                                        'Continuous Scanning',
+                                        style: TextStyle(
+                                            fontSize: 24, color: Colors.black),
+                                      )),
+                                  const SizedBox(
+                                    height: 40,
+                                  ),
                                   data.isLoading ?
                                   const Center(
                                     child: CircularProgressIndicator(),
@@ -133,9 +153,7 @@ class _ScanCargoState extends State<ScanCargoPage> {
                                             50), // NEW
                                       ),
                                       onPressed: () {
-                                        Booking? booking = widget.booking;
-                                        booking?.packages = bookingItems;
-                                        data.pickupCargo(context,booking);
+                                        onSubmit(data);
                                       },
                                       child: const Text(
                                         'Finalize Truck',
@@ -148,5 +166,47 @@ class _ScanCargoState extends State<ScanCargoPage> {
 
 
             )));
+  }
+
+  Future<void> onSubmit(PickupProvider data) async {
+    Booking? booking = widget.booking;
+    booking?.packages = bookingItems;
+    var isPacked = await data.pickupCargo(context,booking);
+    if(isPacked){
+      showAlert("Success", "Cargo pick up successfully",redirectToHome);
+    }
+    else{
+      showAlert("Error", "Something went wrong", onFailMethod);
+    }
+  }
+
+  void showAlert(String title, String msg , Function() function){
+    AppUtils.showAlert(context, title, msg,function);
+  }
+  void redirectToHome(){
+    context.router.push(const HomeRoute());
+  }
+
+  void onFailMethod(){
+    Navigator.of(context).pop();
+  }
+
+  void continuousScanning() async{
+    var res = await Navigator
+        .push(
+        context,
+        MaterialPageRoute(
+          builder: (context) =>
+          const SimpleBarcodeScannerPage(),
+        ));
+    setState(() {
+      if (res is String && res != "-1" && !bookingItems.contains(res)) {
+        scanCount++;
+        bookingItems.add(res);
+      }
+    });
+    if(res != "-1"){
+      continuousScanning();
+    }
   }
 }

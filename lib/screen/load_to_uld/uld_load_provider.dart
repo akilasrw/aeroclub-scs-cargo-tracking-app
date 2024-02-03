@@ -35,14 +35,15 @@ class ULDLoadProvider extends BaseProvider {
     try{
       setLoading(true);
       var response = await repository.createFlightScheduleULDandUpdateStatus(loadULD);
-      if(response.statusCode != null) {
-        if (response.statusCode == ResultStatus.AllOK.value) {
-
+      if(response.status != null) {
+        if (response.status == ResultStatus.AllOK.value) {
+          setLoading(false);
+          return Future.value(true);
         } else {
-
+          setLoading(false);
+          return Future.value(false);
         }
-        setLoading(false);
-        return Future.value(true);
+
       }
     }catch(e){
       print(e);
@@ -58,8 +59,8 @@ class ULDLoadProvider extends BaseProvider {
     try{
       setLoading(true);
       var response = await repository.completeUnpackULD(loadULD);
-      if(response.statusCode != null) {
-        if (response.statusCode == ResultStatus.AllOK.value) {
+      if(response.status != null) {
+        if (response.status == ResultStatus.AllOK.value) {
 
         } else {
 

@@ -15,6 +15,8 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:retrofit/retrofit.dart';
 
 import '../../domain/data/base_response.dart';
+import '../../domain/data/package_filter/package_filter_req.dart';
+import '../../domain/data/package_filter/package_filter_res.dart';
 import '../../domain/data/uld_flight_schedule.dart';
 
 part 'rest_api.g.dart';
@@ -55,4 +57,8 @@ abstract class RestClient {
 
   @POST("/api/v1/Package/UpdateULDAndPackageStatus")
   Future<BaseResponse> updateULDAndPackageStatus(@Body() LoadULD loadULD);
+
+  @GET("/api/v1/Package/GetFilteredAllList")
+  Future<List<PackageFilterRes>?> getPackageListByAWB(@Body() PackageFilterReq packageFilterReq);
+
 }

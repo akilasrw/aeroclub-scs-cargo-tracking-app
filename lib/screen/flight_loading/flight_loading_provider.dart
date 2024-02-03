@@ -64,8 +64,8 @@ class FlightLoadingProvider extends BaseProvider {
     try{
       setLoading(true);
       var response = await repository.updatePackageAndBookingStatusFromULD(loadULD);
-      if(response.statusCode != null) {
-        if (response.statusCode == ResultStatus.AllOK.value) {
+      if(response.status != null) {
+        if (response.status == ResultStatus.AllOK.value) {
 
         } else {
 

@@ -2,7 +2,10 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
+import '../../data/local/local_storage.dart';
 import '../../router/router.gr.dart';
+import 'home_provider.dart';
+import 'package:provider/provider.dart';
 
 class HomeDrawer extends StatelessWidget {
   const HomeDrawer({super.key});
@@ -11,32 +14,36 @@ class HomeDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     final MediaQueryData _mediaQueryData = MediaQuery.of(context);
     final logoWidth = _mediaQueryData.size.width * 0.4;
+    var _localStorage = LocalStorage();
     return Drawer(
-      // Add a ListView to the drawer. This ensures the user can scroll
-      // through the options in the drawer if there isn't enough vertical
-      // space to fit everything.
-      child: ListView(
+      child : ChangeNotifierProvider(
+        create: (BuildContext context) =>
+    HomeProvider()..initProvider(),
+    builder: (context, child) {
+    return Consumer<HomeProvider>(
+    builder: (da, data, child) {
+      return ListView(
         // Important: Remove any padding from the ListView.
         padding: EdgeInsets.zero,
         children: [
           DrawerHeader(
-            decoration: BoxDecoration(
-              color: Colors.blue,
-            ),
-            child: Column(
-              children: [
-                Center(
-                  child: SvgPicture.asset(
-                    'images/ikigai-cargo.svg',
-                    colorBlendMode: BlendMode.srcIn,
-                    width: logoWidth,
-                  ),
-                )
-              ],
-            )
+              decoration: BoxDecoration(
+                color: Colors.blue,
+              ),
+              child: Column(
+                children: [
+                  Center(
+                    child: SvgPicture.asset(
+                      'images/ikigai-cargo.svg',
+                      colorBlendMode: BlendMode.srcIn,
+                      width: logoWidth,
+                    ),
+                  )
+                ],
+              )
 
           ),
-          ListTile(
+          (data.isAdminUser || data.isTruckDriver) ? ListTile(
             leading: const Icon(
               Icons.fire_truck_sharp,
             ),
@@ -45,8 +52,8 @@ class HomeDrawer extends StatelessWidget {
             onTap: () {
               context.router.push(const PickUpCargoMainDetailsRoute());
             },
-          ),
-          ListTile(
+          ) : SizedBox(),
+          (data.isAdminUser || data.isWarehouseUser) ? ListTile(
             leading: const Icon(
               Icons.warehouse,
             ),
@@ -55,8 +62,8 @@ class HomeDrawer extends StatelessWidget {
             onTap: () {
               context.router.push(const HandoverToWarehouseMainDetailsRoute());
             },
-          ),
-          ListTile(
+          ): SizedBox(),
+          (data.isAdminUser || data.isWarehouseUser) ? ListTile(
             leading: const Icon(
               Icons.backpack,
             ),
@@ -65,8 +72,8 @@ class HomeDrawer extends StatelessWidget {
             onTap: () {
               context.router.push(ULDCargoLoadingRoute(isCargoLoading: true));
             },
-          ),
-          ListTile(
+          ): SizedBox(),
+          (data.isAdminUser || data.isWarehouseUser) ? ListTile(
             leading: const Icon(
               Icons.remove_shopping_cart,
             ),
@@ -75,8 +82,8 @@ class HomeDrawer extends StatelessWidget {
             onTap: () {
               context.router.push(UpdateOffloadedCargoRoute());
             },
-          ),
-          ListTile(
+          ): SizedBox(),
+          (data.isAdminUser || data.isWarehouseUser) ? ListTile(
             leading: const Icon(
               Icons.flight_takeoff,
             ),
@@ -85,8 +92,8 @@ class HomeDrawer extends StatelessWidget {
             onTap: () {
               context.router.push(FlightLoadingRoute(isFlightLoading: true));
             },
-          ),
-          ListTile(
+          ): SizedBox(),
+          (data.isAdminUser || data.isWarehouseUser) ? ListTile(
             leading: const Icon(
               Icons.flight_land,
             ),
@@ -95,8 +102,8 @@ class HomeDrawer extends StatelessWidget {
             onTap: () {
               context.router.push(FlightLoadingRoute(isFlightLoading: false));
             },
-          ),
-          ListTile(
+          ): SizedBox(),
+          (data.isAdminUser || data.isWarehouseUser) ? ListTile(
             leading: const Icon(
               Icons.offline_pin_outlined,
             ),
@@ -105,8 +112,8 @@ class HomeDrawer extends StatelessWidget {
             onTap: () {
               context.router.push(ULDCargoLoadingRoute(isCargoLoading: false));
             },
-          ),
-          ListTile(
+          ): SizedBox(),
+          (data.isAdminUser || data.isWarehouseUser) ? ListTile(
             leading: const Icon(
               Icons.delivery_dining,
             ),
@@ -115,8 +122,8 @@ class HomeDrawer extends StatelessWidget {
             onTap: () {
               context.router.push(PackForDeliveryRoute(isPackForDelivery: true));
             },
-          ),
-          ListTile(
+          ): SizedBox(),
+          (data.isAdminUser || data.isTruckDriver) ? ListTile(
             leading: const Icon(
               Icons.handshake_outlined,
             ),
@@ -125,7 +132,7 @@ class HomeDrawer extends StatelessWidget {
             onTap: () {
               context.router.push(PackForDeliveryRoute(isPackForDelivery: false));
             },
-          ),
+          ) : SizedBox(),
           ListTile(
             leading: const Icon(
               Icons.logout,
@@ -133,11 +140,14 @@ class HomeDrawer extends StatelessWidget {
             title: const Text('Logout',
                 style: TextStyle(fontSize: 18, color: Colors.black)),
             onTap: () {
-
+              _localStorage.logOutUser();
+              context.router.push(const LoginRoute());
             },
           )
         ],
-      ),
+      );
+    });})
+      ,
     );
   }
 }

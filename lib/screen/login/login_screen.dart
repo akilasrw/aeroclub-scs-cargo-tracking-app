@@ -32,7 +32,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool isLoading = false;
 
   final _formKey = GlobalKey<FormState>();
-
+  bool _isObscure = true;
   Future<void> requestPermissions() async {
     Map<Permission, PermissionStatus> statuses = await [
       Permission.camera,
@@ -148,13 +148,33 @@ class _LoginScreenState extends State<LoginScreen> {
                                         controller: passwordController,
                                         focusNode: passwordFocus,
                                         style: TextStyle(color: Colors.black45),
-                                        obscureText: true,
-                                        decoration: const InputDecoration(
+                                        obscureText: _isObscure,
+                                        decoration:  InputDecoration(
                                           border: OutlineInputBorder(
                                               borderSide: BorderSide(
                                                   color: Colors.teal)),
                                           labelText: 'Password',
-                                        )),
+                                            contentPadding: EdgeInsets.all(10),
+                                            suffix: IconButton(
+                                              //padding: const EdgeInsets.all(1),
+                                              iconSize: 20.0,
+                                              icon: _isObscure
+                                                  ?  Icon(
+                                                Icons.visibility_off,
+                                                color: Colors.grey,
+                                              )
+                                                  :  Icon(
+                                                Icons.visibility,
+                                                color: Colors.black,
+                                              ),
+                                              onPressed: () {
+                                                setState(() {
+                                                  _isObscure = !_isObscure;
+                                                });
+                                              },
+                                            )
+                                        ),
+                                    ),
                                     SizedBox(
                                       height: heightSpacingFactor,
                                     ),
@@ -233,13 +253,6 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void navigateToNextPage() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString("userName", "akila");
-    await prefs.setString("userType", "warehouse");
-    navigate();
-  }
-
-  void navigate() {
     context.router.push(const HomeRoute());
   }
 

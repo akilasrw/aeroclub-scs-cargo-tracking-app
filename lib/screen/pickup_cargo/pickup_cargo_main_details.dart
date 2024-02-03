@@ -37,7 +37,7 @@ class _PickUpCargoMainDetailsState extends State<PickUpCargoMainDetailsPage> {
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
           title: const Text("Pick Up Cargo"),
         ),
-        body: Center(
+        body: SingleChildScrollView(
             child: Container(
                 margin: const EdgeInsets.all(30.0),
                 child: ChangeNotifierProvider(

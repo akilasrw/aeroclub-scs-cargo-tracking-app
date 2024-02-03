@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
 
 import '../../domain/data/load_uld.dart';
+import '../../router/router.gr.dart';
+import '../../utils/app_utils.dart';
 
 @RoutePage()
 class ScanULDCargoPage extends StatefulWidget {
@@ -114,6 +116,10 @@ class _ScanCargoState extends State<ScanULDCargoPage> {
                               const SizedBox(
                                 height: 40,
                               ),
+                              data.isLoading ?
+                              const Center(
+                                child: CircularProgressIndicator(),
+                              ) :
                               ElevatedButton(
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.blue,
@@ -121,16 +127,7 @@ class _ScanCargoState extends State<ScanULDCargoPage> {
                                         const Size.fromHeight(50), // NEW
                                   ),
                                   onPressed: () {
-                                    if(widget.isCargoLoading){
-                                      LoadULD? loadUld = widget.loadULD;
-                                      loadUld?.packageIDs = bookingItems;
-                                      data.packToULD(loadUld);
-                                    }
-                                    else{
-                                      LoadULD? loadUld = widget.loadULD;
-                                      loadUld?.packageIDs = bookingItems;
-                                      data.unpackToULD(loadUld);
-                                    }
+                                    onSubmit(data);
                                   },
                                   child: Text(
                                     widget.isCargoLoading ? 'Finalize ULD' : 'Unpack Complete',
@@ -140,5 +137,37 @@ class _ScanCargoState extends State<ScanULDCargoPage> {
                             ]);
                       });
                     }))));
+  }
+
+  Future<void> onSubmit(ULDLoadProvider data) async {
+    bool isPacked = false;
+    if(widget.isCargoLoading){
+      LoadULD? loadUld = widget.loadULD;
+      loadUld?.packageIDs = bookingItems;
+      isPacked = await data.packToULD(loadUld);
+
+    }
+    else{
+      LoadULD? loadUld = widget.loadULD;
+      loadUld?.packageIDs = bookingItems;
+      isPacked = await data.unpackToULD(loadUld);
+    }
+    if(isPacked){
+      showAlert("Success", "ULD packed successfully",redirectToHome);
+    }
+    else{
+      showAlert("Error", "Something went wrong", onFailMethod);
+    }
+  }
+
+  void showAlert(String title, String msg , Function() function){
+    AppUtils.showAlert(context, title, msg,function);
+  }
+  void redirectToHome(){
+    context.router.push(const HomeRoute());
+  }
+
+  void onFailMethod(){
+    Navigator.of(context).pop();
   }
 }

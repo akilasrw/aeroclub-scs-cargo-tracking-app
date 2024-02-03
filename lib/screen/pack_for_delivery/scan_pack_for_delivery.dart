@@ -97,7 +97,7 @@ class _ScanCargoState extends State<ScanPackForDeliveryPage> {
                                                   scanCount++;
                                                   cargoController.text = res;
                                                   CargoBookingItem bookingItem = CargoBookingItem(
-                                                      status: widget.isPackForDelivery ? 8 : 9,
+                                                      status: widget.isPackForDelivery ? 6 : 7,
                                                       packageItemId: res);
                                                   bookingItems.add(bookingItem);
                                                 }

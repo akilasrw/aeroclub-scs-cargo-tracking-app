@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class AppUtils {
@@ -11,5 +12,23 @@ class AppUtils {
   static String toCurrencyStringFormate(double value) {
     return NumberFormat.simpleCurrency(name: 'USD', decimalDigits: 0)
         .format(value);
+  }
+
+  static void showAlert(BuildContext context , String title, String msg, Function() onClick){
+    showDialog(
+        context: context,
+        builder : (BuildContext context){
+          return AlertDialog(
+            title: Text(title),
+            content: Text(msg),
+            actions: [
+              TextButton(
+                onPressed: onClick,
+                child: Text('OK'),
+              ),
+            ],
+          );
+        }
+    );
   }
 }

@@ -46,22 +46,16 @@ class PickupProvider extends BaseProvider {
     try{
       setLoading(true);
       var response = await repository.createTruckBookingAWBAndPackages(booking);
-      if(response.statusCode != null) {
-        if (response.statusCode == ResultStatus.AllOK.value) {
-          showToast(context,"Cargo pick up successfully");
-        } else {
-          showToast(context,"Cargo pick up failed");
-        }
-        setLoading(false);
+      setLoading(false);
+      if(response.status == ResultStatus.AllOK.value){
         return Future.value(true);
       }
+      return Future.value(false);
+
     }catch(e){
       print(e);
       setLoading(false);
       return Future.value(false);
     }
-
-    setLoading(false);
-    return Future.value(false);
   }
 }

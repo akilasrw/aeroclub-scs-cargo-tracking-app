@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../domain/data/uld_flight_schedule.dart';
+import '../../router/router.gr.dart';
+import '../../utils/app_utils.dart';
 import 'flight_loading_provider.dart';
 
 @RoutePage()
@@ -180,6 +182,10 @@ class _ScanCargoState extends State<LoadULDToFlightPage> {
                                             const SizedBox(
                                               height: 40,
                                             ),
+                                            data.isLoading ?
+                                            const Center(
+                                              child: CircularProgressIndicator(),
+                                            ) :
                                             ElevatedButton(
                                                 style: ElevatedButton.styleFrom(
                                                   backgroundColor: Colors.blue,
@@ -188,12 +194,10 @@ class _ScanCargoState extends State<LoadULDToFlightPage> {
                                                           50), // NEW
                                                 ),
                                                 onPressed: () {
-                                                  LoadULDtoFlightRequest? loadUld = LoadULDtoFlightRequest(isArrived: !widget.isFlightLoading,
-                                                  ulds: uldIDsList);
-                                                  data.loadUldToFlight(loadUld);
+                                                  onSubmit(data);
                                                 },
                                                 child: const Text(
-                                                  'Finalize ULD',
+                                                  'Done',
                                                   style: TextStyle(
                                                       fontSize: 24,
                                                       color: Colors.black),
@@ -202,5 +206,28 @@ class _ScanCargoState extends State<LoadULDToFlightPage> {
                                     });
                                   }))))));
         })));
+  }
+
+  Future<void> onSubmit(FlightLoadingProvider data) async {
+    LoadULDtoFlightRequest? loadUld = LoadULDtoFlightRequest(isArrived: !widget.isFlightLoading,
+        ulds: uldIDsList);
+    var isPacked = await data.loadUldToFlight(loadUld);
+    if(isPacked){
+      showAlert("Success", "Cargo ${widget.isFlightLoading ? "loaded" : "unloaded"} Successfully",redirectToHome);
+    }
+    else{
+      showAlert("Error", "Something went wrong", onFailMethod);
+    }
+  }
+
+  void showAlert(String title, String msg , Function() function){
+    AppUtils.showAlert(context, title, msg,function);
+  }
+  void redirectToHome(){
+    context.router.push(const HomeRoute());
+  }
+
+  void onFailMethod(){
+    Navigator.of(context).pop();
   }
 }
