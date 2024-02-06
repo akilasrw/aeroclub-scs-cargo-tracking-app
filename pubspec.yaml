@@ -48,6 +48,7 @@ dependencies:
 
 dev_dependencies:
   auto_route_generator: any
+  flutter_launcher_icons: ^0.13.1
   build_runner: ^2.1.7
   flutter_test:
     sdk: flutter
@@ -55,6 +56,12 @@ dev_dependencies:
   json_serializable: ^6.1.5
   retrofit_generator: ^5.0.0
   floor_generator: ^1.2.0
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "images/ikigai-client-icon.png"
+  min_sdk_android: 21
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
