@@ -124,7 +124,7 @@ class _ScanCargoState extends State<UpdateOffloadedCargoPage> {
                                                   cargoController.text = res;
                                                   CargoBookingItem bookingItem =
                                                   CargoBookingItem(
-                                                      status: type == "Offload" ? 6 : 5,
+                                                      status: type == "Offload" ? 4 : 3,
                                                       packageItemId:
                                                       res);
                                                    bookingItems.add(bookingItem);

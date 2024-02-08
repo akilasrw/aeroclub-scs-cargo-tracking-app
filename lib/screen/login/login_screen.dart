@@ -12,6 +12,9 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../common/main_button.dart';
+import '../common/main_text_field.dart';
+
 @RoutePage()
 class LoginScreen extends StatefulWidget {
   @override
@@ -21,7 +24,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   double heightSpacingFactor = 20;
   BoxConstraints buttonBoxConstraint =
-      const BoxConstraints(minWidth: double.infinity, minHeight: 40);
+  const BoxConstraints(minWidth: double.infinity, minHeight: 40);
 
   FocusNode emailFocus = FocusNode();
   FocusNode passwordFocus = FocusNode();
@@ -33,6 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   final _formKey = GlobalKey<FormState>();
   bool _isObscure = true;
+
   Future<void> requestPermissions() async {
     Map<Permission, PermissionStatus> statuses = await [
       Permission.camera,
@@ -59,9 +63,12 @@ class _LoginScreenState extends State<LoginScreen> {
         (_mediaQueryData.padding.bottom + _mediaQueryData.padding.top);
     final logoWidth = _mediaQueryData.size.width * 0.5;
 
-    return WillPopScope(
-      onWillPop: () async => false,
+    return GestureDetector(
+      onTap: () {
+        FocusManager.instance.primaryFocus?.unfocus();
+      },
       child: Scaffold(
+        backgroundColor: const Color(0xFF001C31),
         body: SafeArea(
           child: LayoutBuilder(builder:
               (BuildContext context, BoxConstraints viewportConstraints) {
@@ -70,158 +77,141 @@ class _LoginScreenState extends State<LoginScreen> {
               builder: (context, child) {
                 final provider = context.read<LoginProviderProvider>();
 
-                return SingleChildScrollView(
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight: viewportConstraints.maxHeight,
-                    ),
-                    child: IntrinsicHeight(
-                      child: Container(
-                        padding: EdgeInsets.fromLTRB(30, 30, 30, 0),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: <Widget>[
-                            Container(
-                              child: Stack(
-                                children: [
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Center(
-                                        child: SvgPicture.asset(
-                                          'images/ikigai-cargo.svg',
-                                          colorBlendMode: BlendMode.srcIn,
-                                          width: logoWidth,
-                                        ),
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Text('welcome Back',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .caption
-                                                  ?.copyWith(
-                                                      color: Colors.blue[900],
-                                                      fontSize: 35))
-                                        ],
-                                      ),
-                                      Text(
-                                        'Login to your existing account',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .caption
-                                            ?.copyWith(
-                                                color: Colors.teal,
-                                                fontSize: 20),
+                return Center(
+                  child: Column(
+                    children: [
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      const Text(
+                        "Welcome",
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const Text(
+                        "Login to your Existing Account",
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: Colors.white60,
+                        ),
+                      ),
+                      const Spacer(),
+                      // logo assets
+                      SvgPicture.asset(
+                        'images/ikigai-cargo.svg',
+                        colorBlendMode: BlendMode.srcIn,
+                        width: logoWidth,
+                      ),
+                      const SizedBox(
+                        height: 50,
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: MediaQuery.of(context).size.width * .1),
+                        child:
+                        Form(
+                            key: _formKey,
+                            child:  Column(
+                              children: [
+                                MainTextField(
+                                  controller: userNameController,
+                                  labelText: 'Username',
+                                  onValueChanged: (bool value) {},
+                                ),
+                                const SizedBox(
+                                  height: 20,
+                                ),
+                                MainTextField(
+                                  controller: passwordController,
+                                  labelText: 'Password',
+                                  maxLines: 1,
+                                  obscureText: _isObscure,
+                                  suffix: GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          _isObscure = !_isObscure;
+                                        });
+                                      },
+                                      child: _isObscure
+                                          ? Icon(
+                                        Icons.visibility_off,
+                                        color: Colors.grey,
                                       )
-                                    ],
-                                  )
-                                ],
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Form(
-                                key: _formKey,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    TextField(
-                                        controller: userNameController,
-                                        focusNode: emailFocus,
-                                        style: TextStyle(color: Colors.black45),
-                                        obscureText: false,
-                                        decoration: const InputDecoration(
-                                          border: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                  color: Colors.teal)),
-                                          labelText: 'Username',
-                                        )),
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    TextField(
-                                        controller: passwordController,
-                                        focusNode: passwordFocus,
-                                        style: TextStyle(color: Colors.black45),
-                                        obscureText: _isObscure,
-                                        decoration:  InputDecoration(
-                                          border: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                  color: Colors.teal)),
-                                          labelText: 'Password',
-                                            contentPadding: EdgeInsets.all(10),
-                                            suffix: IconButton(
-                                              //padding: const EdgeInsets.all(1),
-                                              iconSize: 20.0,
-                                              icon: _isObscure
-                                                  ?  Icon(
-                                                Icons.visibility_off,
-                                                color: Colors.grey,
-                                              )
-                                                  :  Icon(
-                                                Icons.visibility,
-                                                color: Colors.black,
-                                              ),
-                                              onPressed: () {
-                                                setState(() {
-                                                  _isObscure = !_isObscure;
-                                                });
-                                              },
-                                            )
-                                        ),
-                                    ),
-                                    SizedBox(
-                                      height: heightSpacingFactor,
-                                    ),
-                                    Consumer<LoginProviderProvider>(
-                                        builder: (context, data, child) {
+                                          : Icon(
+                                        Icons.visibility,
+                                        color: Colors.black,
+                                      )),
+                                  onValueChanged: (bool value) {},
+                                ),
+                                const SizedBox(
+                                  height: 30,
+                                ),
+                                Consumer<LoginProviderProvider>(
+                                    builder: (context, data, child) {
                                       if (data.isLoading) {
-                                        return Center(
+                                        return const Center(
                                           child: CircularProgressIndicator(),
                                         );
                                       }
-                                      return ElevatedButton(
-                                        key: UniqueKey(),
-                                        child: const Text(
-                                          'Login',
-                                          style: TextStyle(
-                                              fontSize: 24,
-                                              color: Colors.black),
-                                        ),
-                                        onPressed: () async {
-                                          if (_formKey.currentState != null &&
-                                              _formKey.currentState!
-                                                  .validate()) {
-                                            if (await provider.login(
-                                                userNameController.text.trim(),
-                                                passwordController.text
-                                                    .trim())) {
-                                              navigateToNextPage();
-                                            }else{
-                                              showAlert("Please insert the correct username and password!");
+                                      return MainButton(
+                                          title: 'LOGIN',
+                                          onTapped: () async {
+                                            if (_formKey.currentState != null &&
+                                                _formKey.currentState!.validate()) {
+                                              if (await provider.login(
+                                                  userNameController.text.trim(),
+                                                  passwordController.text.trim())) {
+                                                navigateToNextPage();
+                                              } else {
+                                                showAlert(
+                                                    "Please insert the correct username and password!");
+                                              }
                                             }
-                                          }
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.blue,
-                                          minimumSize:
-                                              const Size.fromHeight(50), // NEW
-                                        ),
-                                      );
+                                          });
                                     }),
-                                  ],
+                                const SizedBox(
+                                  height: 15,
                                 ),
-                              ),
-                            )
-                          ],
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    SizedBox(),
+                                    InkWell(
+                                      onTap: () {},
+                                      child: const Text(
+                                        "Reset Password",
+                                        textAlign: TextAlign.end,
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          color: Colors.white70,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              ],
+                            )),
+                      ),
+                      const Spacer(),
+                      const Spacer(),
+                      const Spacer(),
+                      const Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          "version 1.1.0",
+                          textAlign: TextAlign.end,
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: Colors.white60,
+                          ),
                         ),
                       ),
-                    ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                    ],
                   ),
                 );
               },
@@ -235,10 +225,13 @@ class _LoginScreenState extends State<LoginScreen> {
   void showAlert(String msg) {
     showDialog(
         context: context,
-        builder : (BuildContext context){
+        builder: (BuildContext context) {
           return AlertDialog(
             title: Text("LOGIN FAILED!"),
-            content: Text(msg,style: TextStyle(color: Colors.black45),),
+            content: Text(
+              msg,
+              style: TextStyle(color: Colors.black45),
+            ),
             actions: [
               TextButton(
                 onPressed: () {
@@ -248,8 +241,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ],
           );
-        }
-    );
+        });
   }
 
   void navigateToNextPage() async {
