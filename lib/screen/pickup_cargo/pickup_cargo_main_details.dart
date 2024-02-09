@@ -13,6 +13,11 @@ import '../../domain/data/airport.dart';
 import '../../domain/data/cargo_agent.dart';
 import 'package:provider/provider.dart';
 
+import '../../utils/constants.dart';
+import '../common/main_button.dart';
+import '../common/main_text_field.dart';
+import '../common/navbar.dart';
+
 @RoutePage()
 class PickUpCargoMainDetailsPage extends StatefulWidget {
   const PickUpCargoMainDetailsPage({Key? key}) : super(key: key);
@@ -32,167 +37,149 @@ class _PickUpCargoMainDetailsState extends State<PickUpCargoMainDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          title: const Text("Pick Up Cargo"),
-        ),
-        body: SingleChildScrollView(
-            child: Container(
-                margin: const EdgeInsets.all(30.0),
+    return GestureDetector(
+        onTap: () {
+          FocusManager.instance.primaryFocus?.unfocus();
+        },
+        child: Scaffold(
+            backgroundColor: const Color(0xFF001C31),
+            body: SafeArea(
                 child: ChangeNotifierProvider(
                     create: (BuildContext context) =>
                         PickupProvider()..initProvider(),
                     builder: (context, child) {
                       return Consumer<PickupProvider>(
-                        builder: (da, data, child) {
-                          if (data.isLoading) {
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          }
-                          return Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                TextField(
-                          style: TextStyle(color: Colors.black45),
-                                  decoration: const InputDecoration(
-                                    border: OutlineInputBorder(
-                                        borderSide:
-                                            BorderSide(color: Colors.teal)),
-                                    labelText: 'Truck Number',
-                                  ),
-                                  controller: truckController,
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                DropdownButtonFormField<CargoAgent>(
-                                  isExpanded: true,
-                                  icon: const Icon(
-                                      Icons.arrow_drop_down_circle_rounded),
-                                  elevation: 16,
-                                  style:
-                                      const TextStyle(color: Colors.deepPurple),
-                                  decoration: const InputDecoration(
-                                    border: OutlineInputBorder(
-                                        borderSide:
-                                            BorderSide(color: Colors.teal)),
-                                    labelText: 'Agent',
-                                  ),
-                                  onChanged: (CargoAgent? value) {
-                                    // This is called when the user selects an item.
-                                    setState(() {
-                                      cargoAgent = value!;
-                                    });
-                                  },
-                                  items: data.cargoAgents
-                                      .map<DropdownMenuItem<CargoAgent>>(
-                                          (CargoAgent value) {
-                                    return DropdownMenuItem<CargoAgent>(
-                                      value: value,
-                                      child: Text(value.agentName),
-                                    );
-                                  }).toList(),
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                DropdownButtonFormField<Airport>(
-                                  isExpanded: true,
-                                  icon: const Icon(
-                                      Icons.arrow_drop_down_circle_rounded),
-                                  elevation: 16,
-                                  style:
-                                      const TextStyle(color: Colors.deepPurple),
-                                  decoration: const InputDecoration(
-                                    border: OutlineInputBorder(
-                                        borderSide:
-                                            BorderSide(color: Colors.teal)),
-                                    labelText: 'Origin',
-                                  ),
-                                  onChanged: (Airport? value) {
-                                    // This is called when the user selects an item.
-                                    setState(() {
-                                      originAirport = value!;
-                                    });
-                                  },
-                                  items: data.list
-                                      .map<DropdownMenuItem<Airport>>(
-                                          (Airport value) {
-                                    return DropdownMenuItem<Airport>(
-                                      value: value,
-                                      child: Text(value.value),
-                                    );
-                                  }).toList(),
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                DropdownButtonFormField<Airport>(
-                                  isExpanded: true,
-                                  icon: const Icon(
-                                      Icons.arrow_drop_down_circle_rounded),
-                                  elevation: 16,
-                                  style:
-                                      const TextStyle(color: Colors.deepPurple),
-                                  decoration: const InputDecoration(
-                                    border: OutlineInputBorder(
-                                        borderSide:
-                                            BorderSide(color: Colors.teal)),
-                                    labelText: 'Destination',
-                                  ),
-                                  onChanged: (Airport? value) {
-                                    setState(() {
-                                      desitnationAirport = value!;
-                                    });
-                                  },
-                                  items: data.list
-                                      .map<DropdownMenuItem<Airport>>(
-                                          (Airport value) {
-                                    return DropdownMenuItem<Airport>(
-                                      value: value,
-                                      child: Text(value.value),
-                                    );
-                                  }).toList(),
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                Container(
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Expanded(
-                                          flex: 8,
-                                          child: TextField(
-                                              controller: awbController,
-                                              style: TextStyle(color: Colors.black45),
-                                              decoration: const InputDecoration(
-                                                border: OutlineInputBorder(
-                                                    borderSide: BorderSide(
-                                                        color: Colors.teal)),
-                                                labelText: 'AWB No',
-                                              ))),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      Material(
-                                          type: MaterialType.transparency,
-                                          child: Ink(
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: Colors.indigoAccent,
-                                                  width: 3.0),
-                                              color: Colors.indigo[900],
-                                              shape: BoxShape.circle,
+                          builder: (da, data, child) {
+                        return Stack(
+                          children: [
+                            const Positioned(
+                              top: 0,
+                              right: 0,
+                              left: 0,
+                              child: Navbar(title: "Pick up Cargo"),
+                            ),
+                            Positioned(
+                              left: 0,
+                              right: 0,
+                              top: 0,
+                              bottom: 0,
+                              child: Center(
+                                child: SingleChildScrollView(
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 15),
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              flex: 1,
+                                              child: MainTextField(
+                                                labelText: 'Track Number',
+                                                onValueChanged: (bool value) {},
+                                                controller: truckController,
+                                              ),
                                             ),
-                                            child: InkWell(
-                                              //This keeps the splash effect within the circle
-                                              borderRadius:
-                                                  BorderRadius.circular(1000.0),
-                                              //Something large to ensure a circle
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        DropdownButtonFormField<CargoAgent>(
+                                          isExpanded: true,
+                                          icon: const Icon(Icons
+                                              .arrow_drop_down_circle_rounded),
+                                          elevation: 16,
+                                          style: const TextStyle(
+                                              color: Color(0xFF001C31)),
+                                          decoration: dropdownDecoration
+                                              .copyWith(hintText: "Agent"),
+                                          onChanged: (CargoAgent? value) {
+                                            // This is called when the user selects an item.
+                                            setState(() {
+                                              cargoAgent = value!;
+                                            });
+                                          },
+                                          items: data.cargoAgents.map<
+                                                  DropdownMenuItem<CargoAgent>>(
+                                              (CargoAgent value) {
+                                            return DropdownMenuItem<CargoAgent>(
+                                              value: value,
+                                              child: Text(value.agentName),
+                                            );
+                                          }).toList(),
+                                        ),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        DropdownButtonFormField<Airport>(
+                                          isExpanded: true,
+                                          icon: const Icon(Icons
+                                              .arrow_drop_down_circle_rounded),
+                                          elevation: 16,
+                                          style: const TextStyle(
+                                              color: Color(0xFF001C31)),
+                                          decoration: dropdownDecoration
+                                              .copyWith(hintText: "Origin"),
+                                          onChanged: (Airport? value) {
+                                            // This is called when the user selects an item.
+                                            setState(() {
+                                              originAirport = value!;
+                                            });
+                                          },
+                                          items: data.list
+                                              .map<DropdownMenuItem<Airport>>(
+                                                  (Airport value) {
+                                            return DropdownMenuItem<Airport>(
+                                              value: value,
+                                              child: Text(value.value),
+                                            );
+                                          }).toList(),
+                                        ),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        DropdownButtonFormField<Airport>(
+                                          isExpanded: true,
+                                          icon: const Icon(Icons
+                                              .arrow_drop_down_circle_rounded),
+                                          elevation: 16,
+                                          style: const TextStyle(
+                                              color: Color(0xFF001C31)),
+                                          decoration:
+                                              dropdownDecoration.copyWith(
+                                                  hintText: "Destination"),
+                                          onChanged: (Airport? value) {
+                                            setState(() {
+                                              desitnationAirport = value!;
+                                            });
+                                          },
+                                          items: data.list
+                                              .map<DropdownMenuItem<Airport>>(
+                                                  (Airport value) {
+                                            return DropdownMenuItem<Airport>(
+                                              value: value,
+                                              child: Text(value.value),
+                                            );
+                                          }).toList(),
+                                        ),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              flex: 1,
+                                              child: MainTextField(
+                                                labelText: 'AWB No',
+                                                onValueChanged: (bool value) {},
+                                                controller: awbController,
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              width: 8,
+                                            ),
+                                            InkWell(
                                               onTap: () async {
                                                 var res = await Navigator.push(
                                                     context,
@@ -207,78 +194,123 @@ class _PickUpCargoMainDetailsState extends State<PickUpCargoMainDetailsPage> {
                                                   }
                                                 });
                                               },
-                                              child: const Padding(
-                                                padding: EdgeInsets.all(15.0),
-                                                child: Icon(
-                                                  Icons
-                                                      .document_scanner_outlined,
-                                                  size: 25.0,
+                                              child: Container(
+                                                width: 40,
+                                                height: 40,
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(5),
+                                                  color: Colors.blue,
+                                                ),
+                                                child: const Icon(
+                                                  Icons.qr_code,
+                                                  size: 25,
                                                   color: Colors.white,
                                                 ),
                                               ),
                                             ),
-                                          )),
-                                    ],
+                                          ],
+                                        )
+                                      ],
+                                    ),
                                   ),
                                 ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.blue,
-                                      minimumSize:
-                                          const Size.fromHeight(50), // NEW
-                                    ),
-                                    onPressed: () {
-                                      if (truckController.text.isEmpty) {
-                                        showAlert("Please add truck number");
-                                        return;
-                                      }
-                                      if (awbController.text.isEmpty) {
-                                        showAlert("Please awb number");
-                                        return;
-                                      }
-                                      if (originAirport == null) {
-                                        showAlert("Please airport");
-                                        return;
-                                      }
-                                      if (desitnationAirport == null) {
-                                        showAlert("Please destination");
-                                        return;
-                                      }
-                                      if (cargoAgent == null) {
-                                        showAlert("Please cargo agent");
-                                        return;
-                                      }
+                              ),
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              left: 0,
+                              right: 0,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 15, vertical: 10),
+                                    child: MainButton(
+                                      title: 'SUBMIT',
+                                      onTapped: () {
+                                        if (truckController.text.isEmpty) {
+                                          showAlert("Please add truck number");
+                                          return;
+                                        }
+                                        if (awbController.text.isEmpty) {
+                                          showAlert("Please awb number");
+                                          return;
+                                        }
+                                        if (originAirport == null) {
+                                          showAlert("Please airport");
+                                          return;
+                                        }
+                                        if (desitnationAirport == null) {
+                                          showAlert("Please destination");
+                                          return;
+                                        }
+                                        if (cargoAgent == null) {
+                                          showAlert("Please cargo agent");
+                                          return;
+                                        }
 
-                                      var booking = Booking(
-                                          awbTrackingNumber:
-                                              int.parse(awbController.text),
-                                          origin: originAirport?.id,
-                                          destination: desitnationAirport?.id,
-                                          truckNo: truckController.text,
-                                          cargoAgent: cargoAgent?.id,
-                                          cargoAgentAppUserId : cargoAgent?.appUserId,
-                                          packages: null);
-                                      context.router.push(
-                                          ScanCargoRoute(booking: booking));
-                                    },
-                                    child: const Text(
-                                      'Submit',
-                                      style: TextStyle(
-                                          fontSize: 24, color: Colors.black),
-                                    ))
-                              ]);
-                        },
-                      );
+                                        var booking = Booking(
+                                            awbTrackingNumber:
+                                                int.parse(awbController.text),
+                                            origin: originAirport?.id,
+                                            destination: desitnationAirport?.id,
+                                            truckNo: truckController.text,
+                                            cargoAgent: cargoAgent?.id,
+                                            cargoAgentAppUserId:
+                                                cargoAgent?.appUserId,
+                                            packages: null);
+                                        context.router.push(
+                                            ScanCargoRoute(booking: booking));
+                                      },
+                                    ),
+                                  ),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 10),
+                                    color: const Color(0xFF223343),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.all(5),
+                                          decoration: const BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: Color(0xFF001C31),
+                                          ),
+                                          child: InkWell(
+                                            onTap: () {
+                                              context.router.push(
+                                                  HomeRoute());
+                                            },
+                                            child: Container(
+                                              width: 40,
+                                              height: 40,
+                                              child: const Icon(
+                                                Icons.home_outlined,
+                                                color: Colors.blue,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        );
+                      });
                     }))));
   }
 
   void showAlert(String msg) {
     showDialog(
         context: context,
-        builder : (BuildContext context){
+        builder: (BuildContext context) {
           return AlertDialog(
             title: Text("ERROR!"),
             content: Text(msg),
@@ -291,7 +323,6 @@ class _PickUpCargoMainDetailsState extends State<PickUpCargoMainDetailsPage> {
               ),
             ],
           );
-        }
-    );
+        });
   }
 }

@@ -95,3 +95,22 @@ Color getOverlayColorByIdForText(int colorIndex) {
   }
   return color;
 }
+
+var dropdownDecoration = InputDecoration(
+  fillColor: Colors.white,
+  alignLabelWithHint: true,
+  filled: true,
+  isDense: true,
+  contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+  enabledBorder: OutlineInputBorder(
+    borderSide: BorderSide(color: Colors.white),
+  ),
+  disabledBorder: OutlineInputBorder(
+    borderSide: BorderSide(color: Colors.white),
+  ),
+  focusedBorder: OutlineInputBorder(
+    borderSide: BorderSide(color: Colors.white),
+  ),
+  hintStyle: TextStyle(
+      color: const Color(0xFF001C31).withOpacity(0.6), fontSize: 14),
+);

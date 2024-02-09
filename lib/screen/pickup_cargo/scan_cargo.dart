@@ -1,13 +1,17 @@
-import 'package:Cargo_Tracker/domain/data/booking.dart';
-import 'package:Cargo_Tracker/domain/data/cargo_booking_item.dart';
-import 'package:Cargo_Tracker/screen/pickup_cargo/provider.dart';
-import 'package:Cargo_Tracker/utils/app_utils.dart';
+import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
+import 'package:flutter/services.dart';
+import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:provider/provider.dart';
-
 import '../../router/router.gr.dart';
+import '../../utils/app_utils.dart';
+import '../common/main_button.dart';
+import '../common/main_text_field.dart';
+import '../common/navbar.dart';
+import 'package:Cargo_Tracker/domain/data/booking.dart';
+
+import '../pickup_cargo/provider.dart';
 
 @RoutePage()
 class ScanCargoPage extends StatefulWidget {
@@ -16,180 +20,210 @@ class ScanCargoPage extends StatefulWidget {
   ScanCargoPage({Key? key, required this.booking}) : super(key: key);
 
   @override
-  State<ScanCargoPage> createState() => _ScanCargoState();
+  State<ScanCargoPage> createState() => _ScanCargoPageState();
 }
 
-class _ScanCargoState extends State<ScanCargoPage> {
+class _ScanCargoPageState extends State<ScanCargoPage> {
+  Barcode? result;
+  QRViewController? controller;
+  final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   int scanCount = 0;
   final TextEditingController cargoController = TextEditingController();
   List<String> bookingItems = [];
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
     return WillPopScope(
-      onWillPop: () async {
-        bool willLeave = false;
-        // show the confirm dialog
-        if(bookingItems.isNotEmpty){
-          String scannedLength = bookingItems.length.toString();
-          await showDialog(
-              context: context,
-              builder: (_) => AlertDialog(
-                title: Text('Scanned $scannedLength packages will be discarded. '
-                    'Do you want to continue?'),
-                actions: [
-                  ElevatedButton(
-                      onPressed: () {
-                        willLeave = true;
-                        Navigator.of(context).pop();
-                      },
-                      child: const Text('Yes')),
-                  TextButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      child: const Text('No'))
-                ],
-              ));
-        }
-        else{
-          willLeave = true;
-        }
-        return willLeave;
-      },
-      child: Scaffold(
-          appBar: AppBar(
-            backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-            title: const Text("Scan Cargo"),
-          ),
-          body: Center(
-              child: Container(
-                  margin: const EdgeInsets.all(30.0),
-                  child: ChangeNotifierProvider(
-                      create: (BuildContext context) =>
-                          PickupProvider()..initProvider(),
-                      builder: (context, child) {
-                        return Consumer<PickupProvider>(
-                            builder: (da, data, child) {
-                          return Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text("Scanned count : $scanCount",
-                                    style: TextStyle(
-                                        color: Colors.grey[800],
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 30)),
-                                SizedBox(
-                                  height: 40,
-                                ),
-                                Container(
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
+        onWillPop: () async {
+          bool willLeave = false;
+          // show the confirm dialog
+          if (bookingItems.isNotEmpty) {
+            String scannedLength = bookingItems.length.toString();
+            await showDialog(
+                context: context,
+                builder: (_) => AlertDialog(
+                      title: Text(
+                          'Scanned $scannedLength packages will be discarded. '
+                          'Do you want to continue?'),
+                      actions: [
+                        ElevatedButton(
+                            onPressed: () {
+                              willLeave = true;
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text('Yes')),
+                        TextButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: const Text('No'))
+                      ],
+                    ));
+          } else {
+            willLeave = true;
+          }
+          return willLeave;
+        },
+        child: GestureDetector(
+          onTap: () {
+            FocusManager.instance.primaryFocus?.unfocus();
+          },
+          child: Scaffold(
+            backgroundColor: const Color(0xFF001C31),
+            body: SafeArea(
+                child: ChangeNotifierProvider(
+                    create: (BuildContext context) =>
+                        PickupProvider()..initProvider(),
+                    builder: (context, child) {
+                      return Consumer<PickupProvider>(
+                          builder: (da, data, child) {
+                        return Stack(
+                          children: [
+                            const Positioned(
+                              top: 0,
+                              right: 0,
+                              left: 0,
+                              child: Navbar(title: "Scan Cargo"),
+                            ),
+                            Positioned(
+                              left: 0,
+                              right: 0,
+                              top: 80,
+                              bottom: 50,
+                              child: SingleChildScrollView(
+                                physics: const AlwaysScrollableScrollPhysics(),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15),
+                                  child: Column(
                                     children: [
-                                      Expanded(
-                                          flex: 8,
-                                          child: TextField(
-                                              controller: cargoController,
-                                              style: TextStyle(
-                                                  color: Colors.black45),
-                                              decoration: const InputDecoration(
-                                                border: OutlineInputBorder(
-                                                    borderSide: BorderSide(
-                                                        color: Colors.teal)),
-                                                labelText: 'Consignment No',
-                                              ))),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      Material(
-                                          type: MaterialType.transparency,
-                                          child: Ink(
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: Colors.indigoAccent,
-                                                  width: 3.0),
-                                              color: Colors.indigo[900],
-                                              shape: BoxShape.circle,
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 20, vertical: 10),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          color: Colors.white,
+                                        ),
+                                        child: Column(
+                                          children: [
+                                            const SizedBox(
+                                              height: 15,
                                             ),
-                                            child: InkWell(
-                                              //This keeps the splash effect within the circle
-                                              borderRadius:
-                                                  BorderRadius.circular(1000.0),
-                                              //Something large to ensure a circle
-                                              onTap: () async {
-                                                var res = await Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          const SimpleBarcodeScannerPage(),
-                                                    ));
-                                                setState(() {
-                                                  if (res is String &&
-                                                      res != "-1" &&
-                                                      !bookingItems
-                                                          .contains(res)) {
-                                                    scanCount++;
-                                                    cargoController.text = res;
-                                                    bookingItems.add(res);
-                                                  }
-                                                });
-                                              },
-                                              child: Padding(
-                                                padding: EdgeInsets.all(15.0),
-                                                child: Icon(
-                                                  Icons
-                                                      .document_scanner_outlined,
-                                                  size: 25.0,
-                                                  color: Colors.white,
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    Icon(Icons.north_east,
+                                                        color: Colors.black87),
+                                                    SizedBox(
+                                                      width: 10,
+                                                    ),
+                                                    Text(
+                                                      "Scanned Count",
+                                                      style: TextStyle(
+                                                          color:
+                                                              Colors.black54),
+                                                    ),
+                                                  ],
                                                 ),
-                                              ),
+                                                Text(
+                                                  "$scanCount",
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      color: Colors.black,
+                                                      fontSize: 20),
+                                                ),
+                                              ],
                                             ),
-                                          )),
+                                            const SizedBox(
+                                              height: 5,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        height: 15,
+                                      ),
+                                      MainTextField(
+                                        labelText: 'Consignment No',
+                                        onValueChanged: (bool value) {},
+                                        controller: cargoController,
+                                      ),
+                                      const SizedBox(
+                                        height: 15,
+                                      ),
+                                      Container(
+                                        width: width,
+                                        height: width - 40,
+                                        // padding: EdgeInsets.symmetric(horizontal: width * .2, vertical: (width-40) *.2),
+                                        decoration: BoxDecoration(
+                                          color: Colors.black,
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        child: _buildQrView(context),
+                                      ),
                                     ],
                                   ),
                                 ),
-                                const SizedBox(
-                                  height: 40,
-                                ),
-                                ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.blue,
-                                      minimumSize:
-                                          const Size.fromHeight(50), // NEW
-                                    ),
-                                    onPressed: () {
-                                      continuousScanning();
-                                    },
-                                    child: const Text(
-                                      'Continuous Scanning',
-                                      style: TextStyle(
-                                          fontSize: 24, color: Colors.black),
-                                    )),
-                                const SizedBox(
-                                  height: 40,
-                                ),
-                                data.isLoading
-                                    ? const Center(
-                                        child: CircularProgressIndicator(),
-                                      )
-                                    : ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: Colors.blue,
-                                          minimumSize:
-                                              const Size.fromHeight(50), // NEW
+                              ),
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              left: 0,
+                              right: 0,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 15, vertical: 5),
+                                    child: data.isLoading
+                                        ? const Center(
+                                            child: CircularProgressIndicator(),
+                                          )
+                                        : MainButton(
+                                            title: 'DONE',
+                                            onTapped: () {
+                                              onSubmit(data);
+                                            },
+                                          ),
+                                  ),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 10),
+                                    color: const Color(0xFF223343),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.all(5),
+                                          decoration: const BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: Color(0xFF001C31),
+                                          ),
+                                          child: const Icon(
+                                            Icons.home_outlined,
+                                            color: Colors.blue,
+                                          ),
                                         ),
-                                        onPressed: () {
-                                          onSubmit(data);
-                                        },
-                                        child: const Text(
-                                          'Finalize Truck',
-                                          style: TextStyle(
-                                              fontSize: 24,
-                                              color: Colors.black),
-                                        ))
-                              ]);
-                        });
-                      })))),
-    );
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        );
+                      });
+                    })),
+          ),
+        ));
   }
 
   Future<void> onSubmit(PickupProvider data) async {
@@ -215,20 +249,50 @@ class _ScanCargoState extends State<ScanCargoPage> {
     Navigator.of(context).pop();
   }
 
-  void continuousScanning() async {
-    var res = await Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const SimpleBarcodeScannerPage(),
-        ));
+  Widget _buildQrView(BuildContext context) {
+    // For this example we check how width or tall the device is and change the scanArea and overlay accordingly.
+    var scanArea = (MediaQuery.of(context).size.width < 400 ||
+            MediaQuery.of(context).size.height < 400)
+        ? 150.0
+        : 300.0;
+    // To ensure the Scanner view is properly sizes after rotation
+    // we need to listen for Flutter SizeChanged notification and update controller
+    return QRView(
+        key: qrKey,
+        onQRViewCreated: _onQRViewCreated,
+        overlay: QrScannerOverlayShape(
+            borderColor: Colors.red,
+            borderRadius: 10,
+            borderLength: 30,
+            borderWidth: 10,
+            cutOutSize: scanArea),
+        onPermissionSet: (ctrl, p) => _onPermissionSet(context, ctrl, p));
+  }
+
+  void _onQRViewCreated(QRViewController controller) {
     setState(() {
-      if (res is String && res != "-1" && !bookingItems.contains(res)) {
-        scanCount++;
-        bookingItems.add(res);
-      }
+      this.controller = controller;
     });
-    if (res != "-1") {
-      continuousScanning();
+    controller.scannedDataStream.listen((scanData) {
+      setState(() {
+        result = scanData;
+
+        if (scanData.code is String &&
+            scanData.code != null &&
+            !bookingItems.contains(scanData.code)) {
+          scanCount++;
+          cargoController.text = scanData.code!;
+          bookingItems.add(scanData.code!);
+        }
+      });
+    });
+  }
+
+  void _onPermissionSet(BuildContext context, QRViewController ctrl, bool p) {
+    if (!p) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('no Permission')),
+      );
     }
   }
 }

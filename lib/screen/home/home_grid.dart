@@ -16,14 +16,14 @@ class HomeGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     List menuList = [
       _MenuItem(Icons.fire_truck_sharp, 'Pick up Cargo', true , PickUpCargoMainDetailsRoute()),
-      _MenuItem(Icons.warehouse, 'Handover to Warehouse' , false , HandoverToWarehouseMainDetailsRoute()),
-      _MenuItem(Icons.backpack, 'Pack to ULD', false , ULDCargoLoadingRoute(isCargoLoading: true)),
-      _MenuItem(Icons.remove_shopping_cart, 'Offload / Return Cargo' , false , UpdateOffloadedCargoRoute()),
+      _MenuItem(Icons.warehouse, 'WH Receiving' , false , HandoverToWarehouseMainDetailsRoute()),
+      _MenuItem(Icons.backpack, 'Pack ULD', false , ULDCargoLoadingRoute(isCargoLoading: true)),
+      _MenuItem(Icons.remove_shopping_cart, 'Standby / Return' , false , UpdateOffloadedCargoRoute()),
       _MenuItem(Icons.flight_takeoff, 'Flight Loading',false , FlightLoadingRoute(isFlightLoading: true)),
       _MenuItem(Icons.flight_land, 'Flight Unloading',false , FlightLoadingRoute(isFlightLoading: false)),
-      _MenuItem(Icons.offline_pin_outlined, 'Unload ULD Cargo',false, ULDCargoLoadingRoute(isCargoLoading: false)),
-      _MenuItem(Icons.delivery_dining, 'Pack for Delivery',false,PackForDeliveryRoute(isPackForDelivery: true)),
-      _MenuItem(Icons.handshake_outlined, 'Handover to Customer',true ,PackForDeliveryRoute(isPackForDelivery: false)),
+      _MenuItem(Icons.offline_pin_outlined, 'Unload ULD',false, ULDCargoLoadingRoute(isCargoLoading: false)),
+      _MenuItem(Icons.delivery_dining, 'Customer Delivery',false,PackForDeliveryRoute(isPackForDelivery: true)),
+      _MenuItem(Icons.handshake_outlined, 'Agent Pickup',true ,PackForDeliveryRoute(isPackForDelivery: false)),
     ];
 
     menuList.removeWhere((menu) => ((isTruckDriver && !menu.isTruckDriverMenu) ||

@@ -4,7 +4,7 @@ part 'package_filter_res.g.dart';
 
 @JsonSerializable()
 class PackageFilterRes {
-  int packageRefNumber;
+  String packageRefNumber;
 
   PackageFilterRes({required this.packageRefNumber});
 

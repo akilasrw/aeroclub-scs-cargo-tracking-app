@@ -1,18 +1,18 @@
-import 'dart:convert';
-
-import 'package:Cargo_Tracker/domain/data/booking.dart';
-import 'package:Cargo_Tracker/domain/data/cargo_booking_item.dart';
-import 'package:Cargo_Tracker/provider/common/status_update_provider.dart';
+import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter/services.dart';
+import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:provider/provider.dart';
-
 import '../../domain/data/booking_status.dart';
+import '../../domain/data/cargo_booking_item.dart';
 import '../../domain/data/package_filter/package_filter_res.dart';
+import '../../provider/common/status_update_provider.dart';
 import '../../router/router.gr.dart';
 import '../../utils/app_utils.dart';
+import '../common/main_button.dart';
+import '../common/main_text_field.dart';
+import '../common/navbar.dart';
 
 @RoutePage()
 class ScanAcceptCargoPage extends StatefulWidget {
@@ -21,144 +21,238 @@ class ScanAcceptCargoPage extends StatefulWidget {
   ScanAcceptCargoPage({Key? key, required this.bookingStatus}) : super(key: key);
 
   @override
-  State<ScanAcceptCargoPage> createState() => _ScanCargoState();
+  State<ScanAcceptCargoPage> createState() => _ScanAcceptCargoPageState();
 }
 
-class _ScanCargoState extends State<ScanAcceptCargoPage> {
+class _ScanAcceptCargoPageState extends State<ScanAcceptCargoPage> {
+  Barcode? result;
+  QRViewController? controller;
+  final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   int scanCount = 0;
   int originalPackageCount = 0;
   final TextEditingController cargoController = TextEditingController();
   List<CargoBookingItem> bookingItems = [];
-
+  List<String> scannedCargo = [];
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          title: const Text("Scan Cargo"),
-        ),
-        body: Center(
-            child: Container(
-                margin: const EdgeInsets.all(30.0),
+    final width = MediaQuery.of(context).size.width;
+    return WillPopScope(
+        onWillPop: () async {
+          bool willLeave = false;
+          // show the confirm dialog
+          if (bookingItems.isNotEmpty) {
+            String scannedLength = bookingItems.length.toString();
+            await showDialog(
+                context: context,
+                builder: (_) => AlertDialog(
+                  title: Text(
+                      'Scanned $scannedLength packages will be discarded. '
+                          'Do you want to continue?'),
+                  actions: [
+                    ElevatedButton(
+                        onPressed: () {
+                          willLeave = true;
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('Yes')),
+                    TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: const Text('No'))
+                  ],
+                ));
+          } else {
+            willLeave = true;
+          }
+          return willLeave;
+        },
+        child: GestureDetector(
+          onTap: () {
+            FocusManager.instance.primaryFocus?.unfocus();
+          },
+          child: Scaffold(
+            backgroundColor: const Color(0xFF001C31),
+            body: SafeArea(
                 child: ChangeNotifierProvider(
                     create: (BuildContext context) =>
-                        HandoverWarehouseProvider()..loadScannedPackages(widget.bookingStatus.awbNumber!),
+                    HandoverWarehouseProvider()..loadScannedPackages(widget.bookingStatus.awbNumber!),
                     builder: (context, child) {
                       return Consumer<HandoverWarehouseProvider>(
                           builder: (da, data, child) {
-                        return Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                  "Original Package Count : ${data.bookedPackageItems.length}",
-                                  style: TextStyle(
-                                      color: Colors.grey[800],
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 25)),
-                              SizedBox(
-                                height: 30,
-                              ),
-                              Text("Scanned count : $scanCount",
-                                  style: TextStyle(
-                                      color: Colors.blue[900],
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 30)),
-                              SizedBox(
-                                height: 40,
-                              ),
-                              Container(
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Expanded(
-                                        flex: 8,
-                                        child: TextField(
-                                            style: TextStyle(color: Colors.black45),
-                                            controller: cargoController,
-                                            decoration: const InputDecoration(
-                                              border: OutlineInputBorder(
-                                                  borderSide: BorderSide(
-                                                      color: Colors.teal)),
-                                              labelText: 'Consignment No',
-                                            ))),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Material(
-                                        type: MaterialType.transparency,
-                                        child: Ink(
-                                          decoration: BoxDecoration(
-                                            border: Border.all(
-                                                color: Colors.indigoAccent,
-                                                width: 3.0),
-                                            color: Colors.indigo[900],
-                                            shape: BoxShape.circle,
-                                          ),
-                                          child: InkWell(
-                                            //This keeps the splash effect within the circle
-                                            borderRadius:
-                                                BorderRadius.circular(1000.0),
-                                            //Something large to ensure a circle
-                                            onTap: () async {
-                                              var res = await Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        const SimpleBarcodeScannerPage(),
-                                                  ));
-                                              setState(() {
-                                                if (res is String) {
-                                                  scanCount++;
-                                                  cargoController.text = res;
-                                                  CargoBookingItem bookingItem =
-                                                      CargoBookingItem(
-                                                          status: 1,
-                                                          packageItemId:
-                                                              res);
-                                                  bookingItems.add(bookingItem);
-                                                }
-                                              });
-                                            },
-                                            child: Padding(
-                                              padding: EdgeInsets.all(15.0),
-                                              child: Icon(
-                                                Icons.document_scanner_outlined,
-                                                size: 25.0,
-                                                color: Colors.white,
-                                              ),
+                            return Stack(
+                              children: [
+                                const Positioned(
+                                  top: 0,
+                                  right: 0,
+                                  left: 0,
+                                  child: Navbar(title: "Scan Cargo"),
+                                ),
+                                Positioned(
+                                  left: 0,
+                                  right: 0,
+                                  top: 80,
+                                  bottom: 50,
+                                  child: SingleChildScrollView(
+                                    physics: const AlwaysScrollableScrollPhysics(),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 15),
+                                      child: Column(
+                                        children: [
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 20, vertical: 10),
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                              BorderRadius.circular(10),
+                                              color: Colors.white,
+                                            ),
+                                            child: Column(
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    Container(
+                                                      padding: const EdgeInsets.all(10),
+                                                      decoration: const BoxDecoration(
+                                                        color: Colors.blue,
+                                                        shape: BoxShape.circle,
+                                                      ),
+                                                      child: Center(
+                                                        child: Text(
+                                                          "${data.bookedPackageItems.length}",
+                                                          style: TextStyle(color: Colors.white),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    const SizedBox(
+                                                      width: 10,
+                                                    ),
+                                                    const Text(
+                                                      "Original Package Count",
+                                                      style: TextStyle(
+                                                        color: Color(0xFF0D1B26),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                const SizedBox(
+                                                  height: 15,
+                                                ),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        Icon(Icons.north_east,
+                                                            color: Colors.black87),
+                                                        SizedBox(
+                                                          width: 10,
+                                                        ),
+                                                        Text(
+                                                          "Scanned Count",
+                                                          style: TextStyle(
+                                                              color:
+                                                              Colors.black54),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    Text(
+                                                      "$scanCount",
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                          FontWeight.w500,
+                                                          color: Colors.black,
+                                                          fontSize: 20),
+                                                    ),
+                                                  ],
+                                                ),
+                                                const SizedBox(
+                                                  height: 5,
+                                                ),
+                                              ],
                                             ),
                                           ),
-                                        )),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 40,
-                              ),
-                              data.isLoading ?
-                              const Center(
-                                child: CircularProgressIndicator(),
-                              ) :
-                              ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.blue,
-                                    minimumSize:
-                                        const Size.fromHeight(50), // NEW
+                                          const SizedBox(
+                                            height: 15,
+                                          ),
+                                          MainTextField(
+                                            labelText: 'Consignment No',
+                                            onValueChanged: (bool value) {},
+                                            controller: cargoController,
+                                          ),
+                                          const SizedBox(
+                                            height: 15,
+                                          ),
+                                          Container(
+                                            width: width,
+                                            height: width - 40,
+                                            // padding: EdgeInsets.symmetric(horizontal: width * .2, vertical: (width-40) *.2),
+                                            decoration: BoxDecoration(
+                                              color: Colors.black,
+                                              borderRadius:
+                                              BorderRadius.circular(10),
+                                            ),
+                                            child: _buildQrView(context),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                                   ),
-                                  onPressed: () {
-                                    //validateScannedCargo(data.bookedPackageItems);
-                                    onSubmit(data);
-                                  },
-                                  child: const Text(
-                                    'Done',
-                                    style: TextStyle(
-                                        fontSize: 24, color: Colors.black),
-                                  ))
-                            ]);
-                      });
-                    }))));
+                                ),
+                                Positioned(
+                                  bottom: 0,
+                                  left: 0,
+                                  right: 0,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 15, vertical: 5),
+                                        child: data.isLoading
+                                            ? const Center(
+                                          child: CircularProgressIndicator(),
+                                        )
+                                            : MainButton(
+                                          title: 'DONE',
+                                          onTapped: () {
+                                            onSubmit(data);
+                                          },
+                                        ),
+                                      ),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 10),
+                                        color: const Color(0xFF223343),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                          children: [
+                                            Container(
+                                              padding: const EdgeInsets.all(5),
+                                              decoration: const BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                color: Color(0xFF001C31),
+                                              ),
+                                              child: const Icon(
+                                                Icons.home_outlined,
+                                                color: Colors.blue,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            );
+                          });
+                    })),
+          ),
+        ));
   }
 
   Future<void> onSubmit(HandoverWarehouseProvider data) async {
@@ -174,14 +268,15 @@ class _ScanCargoState extends State<ScanAcceptCargoPage> {
     }
   }
 
-  void showAlert(String title, String msg , Function() function){
-    AppUtils.showAlert(context, title, msg,function);
+  void showAlert(String title, String msg, Function() function) {
+    AppUtils.showAlert(context, title, msg, function);
   }
-  void redirectToHome(){
+
+  void redirectToHome() {
     context.router.push(const HomeRoute());
   }
 
-  void onFailMethod(){
+  void onFailMethod() {
     Navigator.of(context).pop();
   }
 
@@ -193,6 +288,59 @@ class _ScanCargoState extends State<ScanAcceptCargoPage> {
       if(bookingItems.contains(package.packageRefNumber)){
 
       }
+    }
+  }
+
+  Widget _buildQrView(BuildContext context) {
+    // For this example we check how width or tall the device is and change the scanArea and overlay accordingly.
+    var scanArea = (MediaQuery.of(context).size.width < 400 ||
+        MediaQuery.of(context).size.height < 400)
+        ? 150.0
+        : 300.0;
+    // To ensure the Scanner view is properly sizes after rotation
+    // we need to listen for Flutter SizeChanged notification and update controller
+    return QRView(
+        key: qrKey,
+        onQRViewCreated: _onQRViewCreated,
+        overlay: QrScannerOverlayShape(
+            borderColor: Colors.red,
+            borderRadius: 10,
+            borderLength: 30,
+            borderWidth: 10,
+            cutOutSize: scanArea),
+        onPermissionSet: (ctrl, p) => _onPermissionSet(context, ctrl, p));
+  }
+
+  void _onQRViewCreated(QRViewController controller) {
+    setState(() {
+      this.controller = controller;
+    });
+    controller.scannedDataStream.listen((scanData) {
+      setState(() {
+        result = scanData;
+
+        if (scanData.code is String &&
+            scanData.code != null &&
+            !scannedCargo.contains(scanData.code)) {
+          scanCount++;
+          cargoController.text = scanData.code!;
+          CargoBookingItem bookingItem =
+          CargoBookingItem(
+              status: 1,
+              packageItemId:
+              scanData.code!);
+          bookingItems.add(bookingItem);
+          scannedCargo.add(scanData.code!);
+        }
+      });
+    });
+  }
+
+  void _onPermissionSet(BuildContext context, QRViewController ctrl, bool p) {
+    if (!p) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('no Permission')),
+      );
     }
   }
 }
