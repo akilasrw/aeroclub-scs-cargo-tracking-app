@@ -70,7 +70,7 @@ class RepositoryImpl implements Repository {
               var options = error.response?.requestOptions;
               var _token = await _localStorage!.getAuthToken();
               var _refreshToken = await _localStorage!.getRefreshToken();
-              var updatedToken = await _tokenRefreshRestClient!.refreshToken(_refreshToken!);
+              var updatedToken = await _tokenRefreshRestClient!.refreshToken("\"$_refreshToken\"");
               if (updatedToken.jwtToken != null && updatedToken.jwtToken!.isNotEmpty) {
                 options?.headers["Authorization"] =
                 "Bearer ${updatedToken.jwtToken}";
@@ -103,7 +103,7 @@ class RepositoryImpl implements Repository {
                   listFormat: options?.listFormat);
               var dio = Dio(baseOptions);
               final cloneReq = await dio.request(
-                '${options?.baseUrl}${options!.path}',
+                '${options?.baseUrl}${options!.path.replaceFirst("/", "")}',
                 options: opts,
                 data: options.data,
                 queryParameters: options.queryParameters,

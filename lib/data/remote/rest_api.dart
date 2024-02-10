@@ -29,7 +29,7 @@ abstract class RestClient {
   Future<LoginResponse> loginUser(@Body() LoginRequest loginRequest);
 
   @POST("/api/v1/User/mobile/refresh-token")
-  Future<LoginResponse> refreshToken(@Body() String refreshToken);
+  Future<LoginResponse> refreshToken(@Body() dynamic refreshToken);
 
   @GET("/api/v1/airport/getSelectList")
   Future<List<Airport>?> getAirports();
