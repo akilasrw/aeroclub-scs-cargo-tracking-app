@@ -2,6 +2,7 @@ import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_beep/flutter_beep.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:provider/provider.dart';
 import '../../router/router.gr.dart';
@@ -31,33 +32,67 @@ class _ScanCargoPageState extends State<ScanCargoPage> {
   final TextEditingController cargoController = TextEditingController();
   List<String> bookingItems = [];
 
+
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     return WillPopScope(
         onWillPop: () async {
           bool willLeave = false;
-          // show the confirm dialog
           if (bookingItems.isNotEmpty) {
             String scannedLength = bookingItems.length.toString();
             await showDialog(
                 context: context,
                 builder: (_) => AlertDialog(
-                      title: Text(
-                          'Scanned $scannedLength packages will be discarded. '
-                          'Do you want to continue?'),
-                      actions: [
-                        ElevatedButton(
-                            onPressed: () {
-                              willLeave = true;
-                              Navigator.of(context).pop();
-                            },
-                            child: const Text('Yes')),
-                        TextButton(
-                            onPressed: () => Navigator.of(context).pop(),
-                            child: const Text('No'))
-                      ],
-                    ));
+                  shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                      side: BorderSide(color: Color(0xFF032F50))
+                  ),
+                  backgroundColor: const Color(0xFF001C31),
+                  title: Row(
+                    children: [
+                      Icon(
+                        Icons.warning_amber,
+                        color :Colors.deepOrangeAccent,
+                        size: 35.0,
+                      ),
+                      SizedBox(
+                        width: 15,
+                      ),
+
+                      Text(
+                        'Warning',
+                        style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.white),
+
+                      ),
+                    ],
+                  ),
+                  content: Text('Scanned $scannedLength packages will be discarded. '
+                      'Do you want to continue?',style: TextStyle(color: Colors.white70),),
+                  actions: [
+                    TextButton(
+                      onPressed: (){
+                        willLeave = true;
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('YES',
+                        style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.redAccent),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Text('NO',
+                        style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.green),
+                      ),
+                    )
+                  ],
+                ));
           } else {
             willLeave = true;
           }
@@ -231,14 +266,14 @@ class _ScanCargoPageState extends State<ScanCargoPage> {
     booking?.packages = bookingItems;
     var isPacked = await data.pickupCargo(context, booking);
     if (isPacked) {
-      showAlert("Success", "Cargo pick up successfully", redirectToHome);
+      showAlert("Success", "Cargo pick up successfully",true, redirectToHome);
     } else {
-      showAlert("Error", "Something went wrong", onFailMethod);
+      showAlert("Error", "Something went wrong",false, onFailMethod);
     }
   }
 
-  void showAlert(String title, String msg, Function() function) {
-    AppUtils.showAlert(context, title, msg, function);
+  void showAlert(String title, String msg,bool isSuccess, Function() function) {
+    AppUtils.showAlert(context, title, msg,isSuccess, function);
   }
 
   void redirectToHome() {
@@ -283,6 +318,7 @@ class _ScanCargoPageState extends State<ScanCargoPage> {
           scanCount++;
           cargoController.text = scanData.code!;
           bookingItems.add(scanData.code!);
+          FlutterBeep.beep();
         }
       });
     });

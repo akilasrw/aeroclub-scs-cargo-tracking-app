@@ -75,7 +75,7 @@ class _PickUpCargoMainDetailsState extends State<PickUpCargoMainDetailsPage> {
                                             Expanded(
                                               flex: 1,
                                               child: MainTextField(
-                                                labelText: 'Track Number',
+                                                labelText: 'Truck Number',
                                                 onValueChanged: (bool value) {},
                                                 controller: truckController,
                                               ),

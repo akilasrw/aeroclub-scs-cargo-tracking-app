@@ -2,6 +2,7 @@ import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_beep/flutter_beep.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:provider/provider.dart';
 import '../../domain/data/booking_status.dart';
@@ -261,15 +262,15 @@ class _ScanAcceptCargoPageState extends State<ScanAcceptCargoPage> {
     data.handoverCargo(booking);
     var isPacked = await data.handoverCargo(booking);
     if(isPacked){
-      showAlert("Success", "Cargo handover successfully",redirectToHome);
+      showAlert("Success", "Cargo handover successfully",true,redirectToHome);
     }
     else{
-      showAlert("Error", "Something went wrong", onFailMethod);
+      showAlert("Error", "Something went wrong",false, onFailMethod);
     }
   }
 
-  void showAlert(String title, String msg, Function() function) {
-    AppUtils.showAlert(context, title, msg, function);
+  void showAlert(String title, String msg,bool isSuccess, Function() function) {
+    AppUtils.showAlert(context, title, msg,isSuccess, function);
   }
 
   void redirectToHome() {
@@ -331,6 +332,7 @@ class _ScanAcceptCargoPageState extends State<ScanAcceptCargoPage> {
               scanData.code!);
           bookingItems.add(bookingItem);
           scannedCargo.add(scanData.code!);
+          FlutterBeep.beep();
         }
       });
     });

@@ -225,23 +225,50 @@ class _LoginScreenState extends State<LoginScreen> {
   void showAlert(String msg) {
     showDialog(
         context: context,
-        builder: (BuildContext context) {
+        builder : (BuildContext context){
           return AlertDialog(
-            title: Text("LOGIN FAILED!"),
-            content: Text(
-              msg,
-              style: TextStyle(color: Colors.black45),
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10)),
+                side: BorderSide(color: Color(0xFF032F50))
             ),
+            backgroundColor: const Color(0xFF001C31),
+            title: const Row(
+              children: [
+                Icon(
+                  Icons.warning,
+                  color: Colors.deepOrangeAccent,
+                  size: 35.0,
+                ),
+                SizedBox(
+                  width: 15,
+                ),
+
+                Text(
+                  "LOGIN FAILED!",
+                  style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.white),
+
+                ),
+              ],
+            ),
+            content: Text(msg,style: TextStyle(color: Colors.white70),),
             actions: [
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text('OK'),
+                child: const Text('OK',
+                  style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.orange),
+
+                ),
               ),
             ],
           );
-        });
+        }
+    );
   }
 
   void navigateToNextPage() async {

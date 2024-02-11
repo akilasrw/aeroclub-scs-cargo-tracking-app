@@ -213,15 +213,15 @@ class _ScanCargoState extends State<LoadULDToFlightPage> {
         ulds: uldIDsList);
     var isPacked = await data.loadUldToFlight(loadUld);
     if(isPacked){
-      showAlert("Success", "Cargo ${widget.isFlightLoading ? "loaded" : "unloaded"} Successfully",redirectToHome);
+      showAlert("Success", "Cargo ${widget.isFlightLoading ? "loaded" : "unloaded"} Successfully",true,redirectToHome);
     }
     else{
-      showAlert("Error", "Something went wrong", onFailMethod);
+      showAlert("Error", "Something went wrong",false, onFailMethod);
     }
   }
 
-  void showAlert(String title, String msg , Function() function){
-    AppUtils.showAlert(context, title, msg,function);
+  void showAlert(String title, String msg , bool isSuccess, Function() function){
+    AppUtils.showAlert(context, title, msg,isSuccess,function);
   }
   void redirectToHome(){
     context.router.push(const HomeRoute());

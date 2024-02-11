@@ -1,10 +1,4 @@
-import 'package:Cargo_Tracker/screen/home/home.dart';
 import 'package:auto_route/auto_route.dart';
-import 'package:flutter/cupertino.dart';
-
-import 'package:simple_barcode_scanner/constant.dart';
-
-import '../screen/handover_to_warehouse/handover_to_warehouse_main_details.dart';
 import 'router.gr.dart';
 
 @AutoRouterConfig()
@@ -26,5 +20,6 @@ class AppRouter extends $AppRouter {
     AutoRoute(page: PackForDeliveryRoute.page),
     AutoRoute(page: ScanPackForDeliveryRoute.page),
     AutoRoute(page: UpdateOffloadedCargoRoute.page),
+    AutoRoute(page: ULDPackListRoute.page)
   ];
 }

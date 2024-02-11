@@ -1,0 +1,20 @@
+<svg width="52" height="51" viewBox="0 0 52 51" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Group 66">
+<g id="Regular/AirplaneTakeoff">
+<path id="Vector" d="M26.4375 40.2719L50.87 25.2377" stroke="url(#paint0_linear_3017_345)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Vector_2" d="M3.36687 27.9703L10.8774 35.0027C11.8789 35.9415 13.1566 36.532 14.5205 36.6863C15.8845 36.8407 17.2618 36.5506 18.4477 35.8594L48.6094 18.3281L44.904 13.7859C43.9401 12.6087 42.5869 11.815 41.0889 11.5483C39.591 11.2816 38.047 11.5594 36.736 12.3316L27.8907 17.5313L15.9376 13.5469L12.6505 14.9613C12.4045 15.0667 12.1891 15.2323 12.024 15.4429C11.8589 15.6534 11.7495 15.9022 11.7059 16.1661C11.6622 16.4301 11.6857 16.7008 11.7742 16.9533C11.8627 17.2058 12.0133 17.432 12.2122 17.6109L18.3282 23.1094L12.7501 26.2969L7.17195 23.9063L3.82508 25.3406C3.58158 25.4452 3.36801 25.6089 3.20369 25.8168C3.03937 26.0247 2.9295 26.2703 2.88401 26.5314C2.83852 26.7925 2.85885 27.0608 2.94316 27.312C3.02747 27.5633 3.1731 27.7895 3.36687 27.9703V27.9703Z" stroke="url(#paint1_linear_3017_345)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</g>
+<defs>
+<linearGradient id="paint0_linear_3017_345" x1="24.8575" y1="42.6648" x2="24.2077" y2="41.6078" gradientUnits="userSpaceOnUse">
+<stop stop-color="#AECBE0"/>
+<stop offset="0.48" stop-color="white"/>
+<stop offset="1" stop-color="#AECBE0"/>
+</linearGradient>
+<linearGradient id="paint1_linear_3017_345" x1="-1.28546" y1="42.0323" x2="-1.06734" y2="10.6721" gradientUnits="userSpaceOnUse">
+<stop stop-color="#AECBE0"/>
+<stop offset="0.48" stop-color="white"/>
+<stop offset="1" stop-color="#AECBE0"/>
+</linearGradient>
+</defs>
+</svg>

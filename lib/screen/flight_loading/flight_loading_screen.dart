@@ -1,136 +1,233 @@
-import 'dart:convert';
-
-import 'package:Cargo_Tracker/domain/data/booking.dart';
-import 'package:Cargo_Tracker/domain/data/uld_flight_schedule.dart';
 import 'package:Cargo_Tracker/router/router.gr.dart';
-import 'package:Cargo_Tracker/screen/pickup_cargo/scan_cargo.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+
 import '../../domain/data/flight.dart';
-import 'flight_loading_provider.dart';
+import '../../domain/data/load_uld.dart';
+import '../../domain/data/uld_flight_schedule.dart';
+import '../../utils/constants.dart';
+import '../common/main_button.dart';
+import '../common/main_text_field.dart';
+import '../common/navbar.dart';
+import '../flight_loading/flight_loading_provider.dart';
+import '../load_to_uld/uld_load_provider.dart';
 
 @RoutePage()
-class FlightLoadingPage extends StatefulWidget {
+class FlightLoadingScreen extends StatefulWidget {
   final bool isFlightLoading;
-
-  const FlightLoadingPage({Key? key, required this.isFlightLoading})
-      : super(key: key);
+  const FlightLoadingScreen({Key? key, required this.isFlightLoading}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _PickUpCargoMainDetailsState();
+  State<StatefulWidget> createState() => _FlightLoadingScreenState();
 }
 
-class _PickUpCargoMainDetailsState extends State<FlightLoadingPage> {
-  String result = '';
+class _FlightLoadingScreenState extends State<FlightLoadingScreen> {
   Flight? flight = null;
   final TextEditingController dateController = TextEditingController();
 
   @override
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          title: Text(
-              widget.isFlightLoading ? "Flight Loading" : "Flight Unloading"),
-        ),
-        body: Center(
-            child: Container(
-                margin: const EdgeInsets.all(30.0),
+    return GestureDetector(
+        onTap: () {
+          FocusManager.instance.primaryFocus?.unfocus();
+        },
+        child: Scaffold(
+            backgroundColor: const Color(0xFF001C31),
+            body: SafeArea(
                 child: ChangeNotifierProvider(
                     create: (BuildContext context) =>
-                        FlightLoadingProvider()..initProvider(),
+                    FlightLoadingProvider()..initProvider(),
                     builder: (context, child) {
                       return Consumer<FlightLoadingProvider>(
                           builder: (da, data, child) {
-                        return Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              DropdownButtonFormField<Flight>(
-                                isExpanded: true,
-                                icon: const Icon(
-                                    Icons.arrow_drop_down_circle_rounded),
-                                elevation: 16,
-                                style:
-                                    const TextStyle(color: Colors.deepPurple),
-                                decoration: const InputDecoration(
-                                  border: OutlineInputBorder(
-                                      borderSide:
-                                          BorderSide(color: Colors.teal)),
-                                  labelText: 'Flight No',
+                            return Stack(
+                              children: [
+                                Positioned(
+                                  top: 0,
+                                  right: 0,
+                                  left: 0,
+                                  child: Navbar(title: widget.isFlightLoading ? "Flight Loading" : "Flight Unloading"),
                                 ),
-                                onChanged: (Flight? value) {
-                                  // This is called when the user selects an item.
-                                  setState(() {
-                                    flight = value!;
-                                  });
-                                },
-                                items: data.flightList.map<DropdownMenuItem<Flight>>(
-                                    (Flight value) {
-                                  return DropdownMenuItem<Flight>(
-                                    value: value,
-                                    child: Text(value.value),
-                                  );
-                                }).toList(),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              DateTimeField(
-                                format: DateFormat("yyyy-MM-dd"),
-                                controller: dateController,
-                                textAlign: TextAlign.left,
-                                maxLines: 1,
-                                initialValue: new DateTime.now(),
-                                onShowPicker: (context, currentValue) {
-                                  return showDatePicker(
-                                      context: context,
-                                      firstDate: DateTime(1900),
-                                      initialDate:
-                                          currentValue ?? DateTime.now(),
-                                      lastDate: DateTime(2100));
-                                },
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headline6
-                                    ?.copyWith(color: Colors.black),
-                                decoration: const InputDecoration(
-                                    contentPadding: EdgeInsets.all(8),
-                                    border: OutlineInputBorder(),
-                                    labelText: 'Flight Date',
-                                    prefixIcon: Icon(
-                                      Icons.date_range,
-                                      color: Colors.black,
-                                    )),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.blue,
-                                    minimumSize:
-                                        const Size.fromHeight(50), // NEW
+                                Positioned(
+                                  left: 0,
+                                  right: 0,
+                                  top: 0,
+                                  bottom: 0,
+                                  child: Center(
+                                    child: SingleChildScrollView(
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 15),
+                                        child: Column(
+                                          children: [
+                                            DropdownButtonFormField<Flight>(
+                                              isExpanded: true,
+                                              icon: const Icon(Icons
+                                                  .arrow_drop_down_circle_rounded),
+                                              elevation: 16,
+                                              style: const TextStyle(
+                                                  color: Color(0xFF001C31)),
+                                              decoration: dropdownDecoration
+                                                  .copyWith(hintText: "Flight No"),
+                                              onChanged: (Flight? value) {
+                                                // This is called when the user selects an item.
+                                                setState(() {
+                                                  flight = value!;
+                                                });
+                                              },
+                                              items: data.flightList.map<
+                                                  DropdownMenuItem<Flight>>(
+                                                      (Flight value) {
+                                                    return DropdownMenuItem<Flight>(
+                                                      value: value,
+                                                      child: Text(value.value),
+                                                    );
+                                                  }).toList(),
+                                            ),
+                                            const SizedBox(
+                                              height: 10,
+                                            ),
+                                            DateTimeField(
+                                              format: DateFormat("yyyy-MM-dd"),
+                                              controller: dateController,
+                                              textAlign: TextAlign.left,
+                                              maxLines: 1,
+                                              initialValue: new DateTime.now(),
+                                              onShowPicker: (context, currentValue) {
+                                                return showDatePicker(
+                                                    context: context,
+                                                    firstDate: DateTime(1900),
+                                                    initialDate:
+                                                    currentValue ?? DateTime.now(),
+                                                    lastDate: DateTime(2100));
+                                              },
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyMedium
+                                                  ?.copyWith(color: Colors.black),
+                                              decoration: InputDecoration(
+                                                  fillColor: Colors.white,
+                                                  alignLabelWithHint: true,
+                                                  filled: true,
+                                                  isDense: true,
+                                                  contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                                                  enabledBorder: OutlineInputBorder(
+                                                    borderSide: BorderSide(color: Colors.white),
+                                                  ),
+                                                  disabledBorder: OutlineInputBorder(
+                                                    borderSide: BorderSide(color: Colors.white),
+                                                  ),
+                                                  focusedBorder: OutlineInputBorder(
+                                                    borderSide: BorderSide(color: Colors.white),
+                                                  ),
+                                                  hintText: 'Flight Date',
+                                                  hintStyle: TextStyle(
+                                                      color: const Color(0xFF001C31).withOpacity(0.6), fontSize: 14),
+                                                  prefixIcon: Icon(
+                                                    Icons.date_range,
+                                                    color: Colors.black,
+                                                  )
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              height: 10,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
                                   ),
-                                  onPressed: () {
-                                    var uldFlightSchedule = ULDFlightSchedule(
-                                        flightNumber : flight!.value,
-                                        scheduledDepartureDateTime : dateController.text
-                                    );
-                                    context.router.push(LoadULDToFlightRoute(uldFlightSchedule: uldFlightSchedule,
-                                        isFlightLoading: widget.isFlightLoading));
-                                  },
-                                  child: const Text(
-                                    'Submit',
-                                    style: TextStyle(
-                                        fontSize: 24, color: Colors.black),
-                                  ))
-                            ]);
-                      });
+                                ),
+                                Positioned(
+                                  bottom: 0,
+                                  left: 0,
+                                  right: 0,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 15, vertical: 10),
+                                        child: MainButton(
+                                          title: 'SUBMIT',
+                                          onTapped: () {
+                                            if (dateController.text.isEmpty) {
+                                              showAlert("Please add flight date");
+                                              return;
+                                            }
+                                            if (flight == null) {
+                                              showAlert("Please select a flight");
+                                              return;
+                                            }
+                                            var uldFlightSchedule = ULDFlightSchedule(
+                                                flightNumber : flight!.value,
+                                                scheduledDepartureDateTime : dateController.text
+                                            );
+                                            context.router.push(ULDPackListRoute(uldFlightSchedule: uldFlightSchedule,
+                                                isFlightLoading: widget.isFlightLoading));
+                                          },
+                                        ),
+                                      ),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 10),
+                                        color: const Color(0xFF223343),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                          children: [
+                                            Container(
+                                              padding: const EdgeInsets.all(5),
+                                              decoration: const BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                color: Color(0xFF001C31),
+                                              ),
+                                              child: InkWell(
+                                                onTap: () {
+                                                  context.router.push(
+                                                      HomeRoute());
+                                                },
+                                                child: Container(
+                                                  width: 40,
+                                                  height: 40,
+                                                  child: const Icon(
+                                                    Icons.home_outlined,
+                                                    color: Colors.blue,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            );
+                          });
                     }))));
+  }
+
+  void showAlert(String msg) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("ERROR!"),
+            content: Text(msg),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        });
   }
 }
