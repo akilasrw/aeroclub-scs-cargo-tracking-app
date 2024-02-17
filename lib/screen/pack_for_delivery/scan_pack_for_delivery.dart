@@ -80,7 +80,7 @@ class _ScanPackForDeliveryPageState extends State<ScanPackForDeliveryPage> {
                           builder: (da, data, child) {
                             return Stack(
                               children: [
-                                const Positioned(
+                                Positioned(
                                   top: 0,
                                   right: 0,
                                   left: 0,
@@ -209,9 +209,19 @@ class _ScanPackForDeliveryPageState extends State<ScanPackForDeliveryPage> {
                                                 shape: BoxShape.circle,
                                                 color: Color(0xFF001C31),
                                               ),
-                                              child: const Icon(
-                                                Icons.home_outlined,
-                                                color: Colors.blue,
+                                              child: InkWell(
+                                                onTap: () {
+                                                  context.router.push(
+                                                      HomeRoute());
+                                                },
+                                                child: Container(
+                                                  width: 40,
+                                                  height: 40,
+                                                  child: const Icon(
+                                                    Icons.home_outlined,
+                                                    color: Colors.blue,
+                                                  ),
+                                                ),
                                               ),
                                             ),
                                           ],

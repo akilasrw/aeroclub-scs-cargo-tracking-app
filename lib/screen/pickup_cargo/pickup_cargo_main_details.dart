@@ -13,6 +13,7 @@ import '../../domain/data/airport.dart';
 import '../../domain/data/cargo_agent.dart';
 import 'package:provider/provider.dart';
 
+import '../../utils/app_utils.dart';
 import '../../utils/constants.dart';
 import '../common/main_button.dart';
 import '../common/main_text_field.dart';
@@ -52,7 +53,7 @@ class _PickUpCargoMainDetailsState extends State<PickUpCargoMainDetailsPage> {
                           builder: (da, data, child) {
                         return Stack(
                           children: [
-                            const Positioned(
+                            Positioned(
                               top: 0,
                               right: 0,
                               left: 0,
@@ -231,23 +232,39 @@ class _PickUpCargoMainDetailsState extends State<PickUpCargoMainDetailsPage> {
                                       title: 'SUBMIT',
                                       onTapped: () {
                                         if (truckController.text.isEmpty) {
-                                          showAlert("Please add truck number");
+                                          AppUtils.showAlert(context,'Error',"Please add truck number",false,() {
+                                            Navigator.of(context).pop();
+                                          });
                                           return;
                                         }
                                         if (awbController.text.isEmpty) {
-                                          showAlert("Please awb number");
+                                          AppUtils.showAlert(context,'Error',"Please add AWB number",false,() {
+                                            Navigator.of(context).pop();
+                                          });
                                           return;
                                         }
                                         if (originAirport == null) {
-                                          showAlert("Please airport");
+                                          AppUtils.showAlert(context,'Error',"Please add airport",false,() {
+                                            Navigator.of(context).pop();
+                                          });
                                           return;
                                         }
                                         if (desitnationAirport == null) {
-                                          showAlert("Please destination");
+                                          AppUtils.showAlert(context,'Error',"Please add destination",false,() {
+                                            Navigator.of(context).pop();
+                                          });
                                           return;
                                         }
                                         if (cargoAgent == null) {
-                                          showAlert("Please cargo agent");
+                                          AppUtils.showAlert(context,'Error',"Please cargo agent",false,() {
+                                            Navigator.of(context).pop();
+                                          });
+                                          return;
+                                        }
+                                        if (awbController.text.length != 11) {
+                                          AppUtils.showAlert(context,'Error',"AWB number should contain 11 numbers.",false,() {
+                                            Navigator.of(context).pop();
+                                          });
                                           return;
                                         }
 
@@ -307,7 +324,8 @@ class _PickUpCargoMainDetailsState extends State<PickUpCargoMainDetailsPage> {
                     }))));
   }
 
-  void showAlert(String msg) {
+/*  void showAlert(String msg) {
+
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -324,5 +342,5 @@ class _PickUpCargoMainDetailsState extends State<PickUpCargoMainDetailsPage> {
             ],
           );
         });
-  }
+  }*/
 }

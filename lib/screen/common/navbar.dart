@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 
 class Navbar extends StatelessWidget {
   final String title;
+  final bool isDeleteButtonRequired;
+  final VoidCallback? onDeleteButtonClicked;
 
-  const Navbar({super.key, required this.title});
+  Navbar({super.key, required this.title,
+    this.isDeleteButtonRequired = false,
+    this.onDeleteButtonClicked});
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +44,23 @@ class Navbar extends StatelessWidget {
                 title,
                 style: const TextStyle(color: Colors.white, fontSize: 18),
               ),
+              Flexible(fit: FlexFit.tight, child: SizedBox()),
+              isDeleteButtonRequired ?
+              Align(
+                  alignment: Alignment.center,
+                 child : InkWell(
+                  onTap: onDeleteButtonClicked,
+                  child: Container(
+                    child: const Center(
+                      child: Icon(
+                        Icons.delete_forever,
+                        size: 22,
+                        color: Colors.white,
+                      ),
+                    ),
+                ),
+              ))
+                  : SizedBox()
             ],
           ),
         ),

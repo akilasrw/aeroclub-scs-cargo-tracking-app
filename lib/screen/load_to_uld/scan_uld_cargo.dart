@@ -82,7 +82,7 @@ class _ScanULDCargoPageState extends State<ScanULDCargoPage> {
                           builder: (da, data, child) {
                             return Stack(
                               children: [
-                                const Positioned(
+                                Positioned(
                                   top: 0,
                                   right: 0,
                                   left: 0,
@@ -211,9 +211,19 @@ class _ScanULDCargoPageState extends State<ScanULDCargoPage> {
                                                 shape: BoxShape.circle,
                                                 color: Color(0xFF001C31),
                                               ),
-                                              child: const Icon(
-                                                Icons.home_outlined,
-                                                color: Colors.blue,
+                                              child: InkWell(
+                                                onTap: () {
+                                                  context.router.push(
+                                                      HomeRoute());
+                                                },
+                                                child: Container(
+                                                  width: 40,
+                                                  height: 40,
+                                                  child: const Icon(
+                                                    Icons.home_outlined,
+                                                    color: Colors.blue,
+                                                  ),
+                                                ),
                                               ),
                                             ),
                                           ],
@@ -244,7 +254,7 @@ class _ScanULDCargoPageState extends State<ScanULDCargoPage> {
       isPacked = await data.unpackToULD(loadUld);
     }
     if(isPacked){
-      showAlert("Success", "ULD packed successfully",true,redirectToHome);
+      showAlert("Success", "ULD "+ (widget.isCargoLoading ? "packed" : "unpacked")+" successfully",true,redirectToHome);
     }
     else{
       showAlert("Error", "Something went wrong",false, onFailMethod);

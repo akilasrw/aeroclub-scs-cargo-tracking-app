@@ -171,26 +171,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                             }
                                           });
                                     }),
-                                const SizedBox(
-                                  height: 15,
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    SizedBox(),
-                                    InkWell(
-                                      onTap: () {},
-                                      child: const Text(
-                                        "Reset Password",
-                                        textAlign: TextAlign.end,
-                                        style: TextStyle(
-                                          fontSize: 13,
-                                          color: Colors.white70,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                )
                               ],
                             )),
                       ),

@@ -156,4 +156,56 @@ class AppUtils {
       Navigator.of(context).pop();
     });
   }
+
+  static void confirmDeletion(BuildContext context,String deleteBarcode , VoidCallback onOkClicked){
+    showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+              side: BorderSide(color: Color(0xFF032F50))
+          ),
+          backgroundColor: const Color(0xFF001C31),
+          title: Row(
+            children: [
+              Icon(
+                Icons.warning_amber,
+                color :Colors.deepOrangeAccent,
+                size: 35.0,
+              ),
+              SizedBox(
+                width: 15,
+              ),
+
+              Text(
+                'Warning',
+                style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.white),
+
+              ),
+            ],
+          ),
+          content: Text('Are you sure you want to remove $deleteBarcode from scanned list?'
+            ,style: TextStyle(color: Colors.white70),),
+          actions: [
+            TextButton(
+              onPressed: onOkClicked,
+              child: const Text('YES',
+                style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.redAccent),
+              ),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('NO',
+                style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.green),
+              ),
+            )
+          ],
+        ));
+  }
 }

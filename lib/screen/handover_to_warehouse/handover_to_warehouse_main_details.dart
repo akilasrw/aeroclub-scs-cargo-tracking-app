@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
 import '../../domain/data/booking_status.dart';
 import 'package:provider/provider.dart';
+import '../../utils/app_utils.dart';
 import '../common/main_button.dart';
 import '../common/main_text_field.dart';
 import '../common/navbar.dart';
@@ -39,7 +40,7 @@ class _HandoverToWarehouseMainDetailsPageState extends State<HandoverToWarehouse
                           builder: (da, data, child) {
                             return Stack(
                               children: [
-                                const Positioned(
+                                Positioned(
                                   top: 0,
                                   right: 0,
                                   left: 0,
@@ -62,7 +63,7 @@ class _HandoverToWarehouseMainDetailsPageState extends State<HandoverToWarehouse
                                                 Expanded(
                                                   flex: 1,
                                                   child: MainTextField(
-                                                    labelText: 'Track Number',
+                                                    labelText: 'Truck Number',
                                                     onValueChanged: (bool value) {},
                                                     controller: truckController,
                                                   ),
@@ -137,11 +138,21 @@ class _HandoverToWarehouseMainDetailsPageState extends State<HandoverToWarehouse
                                           title: 'SUBMIT',
                                           onTapped: () {
                                             if (truckController.text.isEmpty) {
-                                              showAlert("Please add truck number");
+                                              AppUtils.showAlert(context,'Error',"Please add truck number",false,() {
+                                                Navigator.of(context).pop();
+                                              });
                                               return;
                                             }
                                             if (awbController.text.isEmpty) {
-                                              showAlert("Please add awb number");
+                                              AppUtils.showAlert(context,'Error',"Please add AWB number",false,() {
+                                                Navigator.of(context).pop();
+                                              });
+                                              return;
+                                            }
+                                            if (awbController.text.length != 11) {
+                                              AppUtils.showAlert(context,'Error',"AWB number should contain 11 numbers.",false,() {
+                                                Navigator.of(context).pop();
+                                              });
                                               return;
                                             }
                                             var bookingStatus = BookingStatus(
@@ -194,24 +205,5 @@ class _HandoverToWarehouseMainDetailsPageState extends State<HandoverToWarehouse
                             );
                           });
                     }))));
-  }
-
-  void showAlert(String msg) {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text("ERROR!"),
-            content: Text(msg),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text('OK'),
-              ),
-            ],
-          );
-        });
   }
 }

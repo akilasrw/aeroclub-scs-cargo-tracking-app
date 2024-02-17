@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_beep/flutter_beep.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:provider/provider.dart';
+import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
 import '../../router/router.gr.dart';
 import '../../utils/app_utils.dart';
 import '../common/main_button.dart';
@@ -113,11 +114,25 @@ class _ScanCargoPageState extends State<ScanCargoPage> {
                           builder: (da, data, child) {
                         return Stack(
                           children: [
-                            const Positioned(
+                            Positioned(
                               top: 0,
                               right: 0,
                               left: 0,
-                              child: Navbar(title: "Scan Cargo"),
+                              child: Navbar(title: "Scan Cargo",
+                              isDeleteButtonRequired: true,
+                              onDeleteButtonClicked: () async {
+                                var res = await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                      const SimpleBarcodeScannerPage(),
+                                    ));
+                                setState(() {
+                                  if (res is String && res != '-1') {
+                                    confirmDeletion(res);
+                                  }
+                                });
+                              }),
                             ),
                             Positioned(
                               left: 0,
@@ -242,9 +257,19 @@ class _ScanCargoPageState extends State<ScanCargoPage> {
                                             shape: BoxShape.circle,
                                             color: Color(0xFF001C31),
                                           ),
-                                          child: const Icon(
-                                            Icons.home_outlined,
-                                            color: Colors.blue,
+                                          child: InkWell(
+                                            onTap: () {
+                                              context.router.push(
+                                                  HomeRoute());
+                                            },
+                                            child: Container(
+                                              width: 40,
+                                              height: 40,
+                                              child: const Icon(
+                                                Icons.home_outlined,
+                                                color: Colors.blue,
+                                              ),
+                                            ),
                                           ),
                                         ),
                                       ],
@@ -330,5 +355,67 @@ class _ScanCargoPageState extends State<ScanCargoPage> {
         const SnackBar(content: Text('no Permission')),
       );
     }
+  }
+
+  void confirmDeletion(String deleteBarcode){
+    showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+              side: BorderSide(color: Color(0xFF032F50))
+          ),
+          backgroundColor: const Color(0xFF001C31),
+          title: Row(
+            children: [
+              Icon(
+                Icons.warning_amber,
+                color :Colors.deepOrangeAccent,
+                size: 35.0,
+              ),
+              SizedBox(
+                width: 15,
+              ),
+
+              Text(
+                'Warning',
+                style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.white),
+
+              ),
+            ],
+          ),
+          content: Text('Are you sure you want to remove $deleteBarcode from scanned list?'
+            ,style: TextStyle(color: Colors.white70),),
+          actions: [
+            TextButton(
+              onPressed: (){
+                bool removed = bookingItems.remove(deleteBarcode);
+                if(removed){
+                  setState(() {
+                    bookingItems;
+                    scanCount--;
+                  });
+                }
+
+                Navigator.of(context).pop();
+              },
+              child: const Text('YES',
+                style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.redAccent),
+              ),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('NO',
+                style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.green),
+              ),
+            )
+          ],
+        ));
   }
 }
