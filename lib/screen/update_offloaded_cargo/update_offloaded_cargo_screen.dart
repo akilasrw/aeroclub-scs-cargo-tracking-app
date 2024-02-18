@@ -2,8 +2,10 @@ import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_beep/flutter_beep.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:provider/provider.dart';
+import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
 import '../../domain/data/booking_status.dart';
 import '../../domain/data/cargo_booking_item.dart';
 import '../../domain/data/package_filter/package_filter_res.dart';
@@ -84,7 +86,32 @@ class _UpdateOffloadedCargoPageState extends State<UpdateOffloadedCargoPage> {
                                   top: 0,
                                   right: 0,
                                   left: 0,
-                                  child: Navbar(title: "Offload / Return Cargo"),
+                                  child: Navbar(title: "Offload / Return Cargo",
+                                      isDeleteButtonRequired: true,
+                                      onDeleteButtonClicked: () async {
+                                        var res = await Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                              const SimpleBarcodeScannerPage(),
+                                            ));
+
+                                        if (res is String && res != '-1') {
+                                          AppUtils.confirmDeletion(context,res, (){
+                                            bookingItems.removeWhere((item) => item.packageItemId == res);
+                                            bool removed = scannedCargo.remove(res);
+                                            if(removed){
+                                              setState(() {
+                                                scannedCargo;
+                                                bookingItems;
+                                                scanCount--;
+                                              });
+                                            }
+                                            Navigator.of(context).pop();
+                                          });
+                                        }
+
+                                      }),
                                 ),
                                 Positioned(
                                   left: 0,
@@ -265,13 +292,20 @@ class _UpdateOffloadedCargoPageState extends State<UpdateOffloadedCargoPage> {
   }
 
   Future<void> onSubmit(HandoverWarehouseProvider data) async {
-    BookingStatus? booking = BookingStatus(itemList: bookingItems);
-    var isPacked = await data.handoverCargo(booking);
+    if(bookingItems != null && bookingItems.isNotEmpty){
+      BookingStatus? booking = BookingStatus(itemList: bookingItems);
+      var isPacked = await data.handoverCargo(booking);
 
-    if (isPacked) {
-      showAlert("Success", "Cargo handover successfully",true, redirectToHome);
-    } else {
-      showAlert("Error", "Something went wrong",false, onFailMethod);
+      if (isPacked) {
+        showAlert("Success", "Cargo handover successfully",true, redirectToHome);
+      } else {
+        showAlert("Error", "Something went wrong",false, onFailMethod);
+      }
+    }
+    else{
+      AppUtils.showAlert(context,'Error',"no packages has scanned.",false,() {
+        Navigator.of(context).pop();
+      });
     }
   }
 
@@ -329,6 +363,7 @@ class _UpdateOffloadedCargoPageState extends State<UpdateOffloadedCargoPage> {
           CargoBookingItem bookingItem = CargoBookingItem(
               status: type == "Offload" ? 4 : 3, packageItemId: scanData.code!);
           bookingItems.add(bookingItem);
+          FlutterBeep.beep();
         }
       });
     });

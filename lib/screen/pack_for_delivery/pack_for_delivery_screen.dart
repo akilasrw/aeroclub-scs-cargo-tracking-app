@@ -11,6 +11,7 @@ import '../../domain/data/booking_status.dart';
 import '../../domain/data/cargo_agent.dart';
 import 'package:provider/provider.dart';
 
+import '../../utils/app_utils.dart';
 import '../../utils/constants.dart';
 import '../common/main_button.dart';
 import '../common/main_text_field.dart';
@@ -174,13 +175,21 @@ class _PackForDeliveryPageState extends State<PackForDeliveryPage> {
                                           title: 'SUBMIT',
                                           onTapped: () {
                                             if (truckController.text.isEmpty) {
-                                              showAlert(
-                                                  "Please add truck number");
+                                              AppUtils.showAlert(context,'Error',"Please add truck number",false,() {
+                                                Navigator.of(context).pop();
+                                              });
                                               return;
                                             }
                                             if (awbController.text.isEmpty) {
-                                              showAlert(
-                                                  "Please add awb number");
+                                              AppUtils.showAlert(context,'Error',"Please add awb number",false,() {
+                                                Navigator.of(context).pop();
+                                              });
+                                              return;
+                                            }
+                                            if (awbController.text.length != 11) {
+                                              AppUtils.showAlert(context,'Error',"AWB number should contain 11 numbers.",false,() {
+                                                Navigator.of(context).pop();
+                                              });
                                               return;
                                             }
                                             var bookingStatus = BookingStatus(

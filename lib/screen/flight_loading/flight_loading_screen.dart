@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import '../../domain/data/flight.dart';
 import '../../domain/data/load_uld.dart';
 import '../../domain/data/uld_flight_schedule.dart';
+import '../../utils/app_utils.dart';
 import '../../utils/constants.dart';
 import '../common/main_button.dart';
 import '../common/main_text_field.dart';
@@ -154,12 +155,16 @@ class _FlightLoadingScreenState extends State<FlightLoadingScreen> {
                                         child: MainButton(
                                           title: 'SUBMIT',
                                           onTapped: () {
-                                            if (dateController.text.isEmpty) {
-                                              showAlert("Please add flight date");
+                                            if (flight == null) {
+                                              AppUtils.showAlert(context,'Error',"Please select a flight",false,() {
+                                                Navigator.of(context).pop();
+                                              });
                                               return;
                                             }
-                                            if (flight == null) {
-                                              showAlert("Please select a flight");
+                                            if (dateController.text.isEmpty) {
+                                              AppUtils.showAlert(context,'Error',"Please add flight date",false,() {
+                                                Navigator.of(context).pop();
+                                              });
                                               return;
                                             }
                                             var uldFlightSchedule = ULDFlightSchedule(

@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_beep/flutter_beep.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:provider/provider.dart';
+import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
 import '../../domain/data/load_uld.dart';
 import '../../router/router.gr.dart';
 import '../../utils/app_utils.dart';
@@ -47,19 +48,53 @@ class _ScanULDCargoPageState extends State<ScanULDCargoPage> {
             await showDialog(
                 context: context,
                 builder: (_) => AlertDialog(
-                  title: Text(
-                      'Scanned $scannedLength packages will be discarded. '
-                          'Do you want to continue?'),
+                  shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                      side: BorderSide(color: Color(0xFF032F50))
+                  ),
+                  backgroundColor: const Color(0xFF001C31),
+                  title: Row(
+                    children: [
+                      Icon(
+                        Icons.warning_amber,
+                        color :Colors.deepOrangeAccent,
+                        size: 35.0,
+                      ),
+                      SizedBox(
+                        width: 15,
+                      ),
+
+                      Text(
+                        'Warning',
+                        style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.white),
+
+                      ),
+                    ],
+                  ),
+                  content: Text('Scanned $scannedLength packages will be discarded. '
+                      'Do you want to continue?',style: TextStyle(color: Colors.white70),),
                   actions: [
-                    ElevatedButton(
-                        onPressed: () {
-                          willLeave = true;
-                          Navigator.of(context).pop();
-                        },
-                        child: const Text('Yes')),
                     TextButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        child: const Text('No'))
+                      onPressed: (){
+                        willLeave = true;
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('YES',
+                        style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.redAccent),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Text('NO',
+                        style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.green),
+                      ),
+                    )
                   ],
                 ));
           } else {
@@ -86,7 +121,30 @@ class _ScanULDCargoPageState extends State<ScanULDCargoPage> {
                                   top: 0,
                                   right: 0,
                                   left: 0,
-                                  child: Navbar(title: "Scan ULD Cargo"),
+                                  child: Navbar(title: "Scan ULD Cargo",
+                                      isDeleteButtonRequired: true,
+                                      onDeleteButtonClicked: () async {
+                                        var res = await Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                              const SimpleBarcodeScannerPage(),
+                                            ));
+
+                                        if (res is String && res != '-1') {
+                                          AppUtils.confirmDeletion(context,res, (){
+                                            bool removed = bookingItems.remove(res);
+                                            if(removed){
+                                              setState(() {
+                                                bookingItems;
+                                                scanCount--;
+                                              });
+                                            }
+                                            Navigator.of(context).pop();
+                                          });
+                                        }
+
+                                      }),
                                 ),
                                 Positioned(
                                   left: 0,

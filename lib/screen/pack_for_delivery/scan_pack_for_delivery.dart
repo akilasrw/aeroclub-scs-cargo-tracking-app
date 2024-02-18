@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_beep/flutter_beep.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:provider/provider.dart';
+import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
 import '../../domain/data/booking_status.dart';
 import '../../domain/data/cargo_booking_item.dart';
 import '../../provider/common/status_update_provider.dart';
@@ -45,19 +46,53 @@ class _ScanPackForDeliveryPageState extends State<ScanPackForDeliveryPage> {
             await showDialog(
                 context: context,
                 builder: (_) => AlertDialog(
-                  title: Text(
-                      'Scanned $scannedLength packages will be discarded. '
-                          'Do you want to continue?'),
+                  shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                      side: BorderSide(color: Color(0xFF032F50))
+                  ),
+                  backgroundColor: const Color(0xFF001C31),
+                  title: Row(
+                    children: [
+                      Icon(
+                        Icons.warning_amber,
+                        color :Colors.deepOrangeAccent,
+                        size: 35.0,
+                      ),
+                      SizedBox(
+                        width: 15,
+                      ),
+
+                      Text(
+                        'Warning',
+                        style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.white),
+
+                      ),
+                    ],
+                  ),
+                  content: Text('Scanned $scannedLength packages will be discarded. '
+                      'Do you want to continue?',style: TextStyle(color: Colors.white70),),
                   actions: [
-                    ElevatedButton(
-                        onPressed: () {
-                          willLeave = true;
-                          Navigator.of(context).pop();
-                        },
-                        child: const Text('Yes')),
                     TextButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        child: const Text('No'))
+                      onPressed: (){
+                        willLeave = true;
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('YES',
+                        style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.redAccent),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Text('NO',
+                        style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.green),
+                      ),
+                    )
                   ],
                 ));
           } else {
@@ -84,7 +119,32 @@ class _ScanPackForDeliveryPageState extends State<ScanPackForDeliveryPage> {
                                   top: 0,
                                   right: 0,
                                   left: 0,
-                                  child: Navbar(title: "Scan Cargo"),
+                                  child: Navbar(title: "Scan Cargo",
+                                      isDeleteButtonRequired: true,
+                                      onDeleteButtonClicked: () async {
+                                        var res = await Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                              const SimpleBarcodeScannerPage(),
+                                            ));
+
+                                        if (res is String && res != '-1') {
+                                          AppUtils.confirmDeletion(context,res, (){
+                                            bookingItems.removeWhere((item) => item.packageItemId == res);
+                                            bool removed = scannedCargo.remove(res);
+                                            if(removed){
+                                              setState(() {
+                                                scannedCargo;
+                                                bookingItems;
+                                                scanCount--;
+                                              });
+                                            }
+                                            Navigator.of(context).pop();
+                                          });
+                                        }
+
+                                      }),
                                 ),
                                 Positioned(
                                   left: 0,

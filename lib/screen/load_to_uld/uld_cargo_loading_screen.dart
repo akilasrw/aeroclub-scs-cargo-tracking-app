@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 
 import '../../domain/data/flight.dart';
 import '../../domain/data/load_uld.dart';
+import '../../utils/app_utils.dart';
 import '../../utils/constants.dart';
 import '../common/main_button.dart';
 import '../common/main_text_field.dart';
@@ -168,16 +169,22 @@ class _ULDCargoLoadingPageState extends State<ULDCargoLoadingPage> {
                                         child: MainButton(
                                           title: 'SUBMIT',
                                           onTapped: () {
-                                            if (uldNumberController.text.isEmpty) {
-                                              showAlert("Please add ULD number");
+                                            if (flight == null) {
+                                              AppUtils.showAlert(context,'Error',"Please select a flight",false,() {
+                                                Navigator.of(context).pop();
+                                              });
                                               return;
                                             }
                                             if (dateController.text.isEmpty) {
-                                              showAlert("Please add flight date");
+                                              AppUtils.showAlert(context,'Error',"Please add flight date",false,() {
+                                                Navigator.of(context).pop();
+                                              });
                                               return;
                                             }
-                                            if (flight == null) {
-                                              showAlert("Please select a flight");
+                                            if (uldNumberController.text.isEmpty) {
+                                              AppUtils.showAlert(context,'Error',"Please add uld number",false,() {
+                                                Navigator.of(context).pop();
+                                              });
                                               return;
                                             }
                                             var loadULD = LoadULD(
