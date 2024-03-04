@@ -4,6 +4,7 @@ import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
 
 import '../../domain/data/flight.dart';
 import '../../domain/data/load_uld.dart';
@@ -27,6 +28,7 @@ class _ULDCargoLoadingPageState extends State<ULDCargoLoadingPage> {
   final TextEditingController uldNumberController = TextEditingController();
   Flight? flight = null;
   final TextEditingController dateController = TextEditingController();
+  final TextEditingController awbController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -150,6 +152,53 @@ class _ULDCargoLoadingPageState extends State<ULDCargoLoadingPage> {
                                             const SizedBox(
                                               height: 10,
                                             ),
+                                            Row(
+                                              children: [
+                                                Expanded(
+                                                  flex: 1,
+                                                  child: MainTextField(
+                                                    labelText: 'AWB No',
+                                                    onValueChanged: (bool value) {},
+                                                    controller: awbController,
+                                                  ),
+                                                ),
+                                                const SizedBox(
+                                                  width: 8,
+                                                ),
+                                                InkWell(
+                                                  onTap: () async {
+                                                    var res = await Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                          builder: (context) =>
+                                                          const SimpleBarcodeScannerPage(),
+                                                        ));
+                                                    setState(() {
+                                                      if (res is String) {
+                                                        awbController.text = res;
+                                                      }
+                                                    });
+                                                  },
+                                                  child: Container(
+                                                    width: 40,
+                                                    height: 40,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                      BorderRadius.circular(5),
+                                                      color: Colors.blue,
+                                                    ),
+                                                    child: const Icon(
+                                                      Icons.qr_code,
+                                                      size: 25,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            const SizedBox(
+                                              height: 10,
+                                            ),
                                           ],
                                         ),
                                       ),
@@ -187,11 +236,18 @@ class _ULDCargoLoadingPageState extends State<ULDCargoLoadingPage> {
                                               });
                                               return;
                                             }
+                                            if (awbController.text.isEmpty) {
+                                              AppUtils.showAlert(context,'Error',"Please add awb number",false,() {
+                                                Navigator.of(context).pop();
+                                              });
+                                              return;
+                                            }
                                             var loadULD = LoadULD(
                                                 flightID:flight?.id,
                                                 scheduledDepartureDateTime : dateController.text,
                                                 uldSerialNumber: uldNumberController.text,
                                                 uld : uldNumberController.text,
+                                                awbNumber: awbController.text,
                                                 packageIDs: null
                                             );
                                             context.router.push(ScanULDCargoRoute(loadULD: loadULD,
