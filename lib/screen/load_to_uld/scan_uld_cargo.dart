@@ -214,6 +214,7 @@ class _ScanULDCargoPageState extends State<ScanULDCargoPage> {
                                             labelText: 'Consignment No',
                                             onValueChanged: (bool value) {},
                                             controller: cargoController,
+                                            readOnly : true
                                           ),
                                           const SizedBox(
                                             height: 15,
@@ -299,23 +300,28 @@ class _ScanULDCargoPageState extends State<ScanULDCargoPage> {
   }
 
   Future<void> onSubmit(ULDLoadProvider data) async {
-    bool isPacked = false;
-    if(widget.isCargoLoading){
-      LoadULD? loadUld = widget.loadULD;
-      loadUld?.packageIDs = bookingItems;
-      isPacked = await data.packToULD(loadUld);
+    if(bookingItems != null && bookingItems.length > 0){
+      bool isPacked = false;
+      if(widget.isCargoLoading){
+        LoadULD? loadUld = widget.loadULD;
+        loadUld?.packageIDs = bookingItems;
+        isPacked = await data.packToULD(loadUld);
 
+      }
+      else{
+        LoadULD? loadUld = widget.loadULD;
+        loadUld?.packageIDs = bookingItems;
+        isPacked = await data.unpackToULD(loadUld);
+      }
+      if(isPacked){
+        showAlert("Success", "ULD "+ (widget.isCargoLoading ? "packed" : "unpacked")+" successfully",true,redirectToHome);
+      }
+      else{
+        showAlert("Error", "Something went wrong",false, onFailMethod);
+      }
     }
     else{
-      LoadULD? loadUld = widget.loadULD;
-      loadUld?.packageIDs = bookingItems;
-      isPacked = await data.unpackToULD(loadUld);
-    }
-    if(isPacked){
-      showAlert("Success", "ULD "+ (widget.isCargoLoading ? "packed" : "unpacked")+" successfully",true,redirectToHome);
-    }
-    else{
-      showAlert("Error", "Something went wrong",false, onFailMethod);
+      showAlert("Error", "No packages has scanned",false, onFailMethod);
     }
   }
 

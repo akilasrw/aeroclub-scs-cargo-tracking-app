@@ -242,6 +242,7 @@ class _ScanAcceptCargoPageState extends State<ScanAcceptCargoPage> {
                                             labelText: 'Consignment No',
                                             onValueChanged: (bool value) {},
                                             controller: cargoController,
+                                            readOnly : true
                                           ),
                                           const SizedBox(
                                             height: 15,
@@ -327,15 +328,20 @@ class _ScanAcceptCargoPageState extends State<ScanAcceptCargoPage> {
   }
 
   Future<void> onSubmit(HandoverWarehouseProvider data) async {
-    BookingStatus? booking = widget.bookingStatus;
-    booking?.itemList = bookingItems;
-    data.handoverCargo(booking);
-    var isPacked = await data.handoverCargo(booking);
-    if(isPacked){
-      showAlert("Success", "Cargo handover successful",true,redirectToHome);
+    if(bookingItems != null && bookingItems.length > 0){
+      BookingStatus? booking = widget.bookingStatus;
+      booking?.itemList = bookingItems;
+      data.handoverCargo(booking);
+      var isPacked = await data.handoverCargo(booking);
+      if(isPacked){
+        showAlert("Success", "Cargo handover successful",true,redirectToHome);
+      }
+      else{
+        showAlert("Error", "Something went wrong",false, onFailMethod);
+      }
     }
     else{
-      showAlert("Error", "Something went wrong",false, onFailMethod);
+      showAlert("Error", "No packages has scanned",false, onFailMethod);
     }
   }
 
