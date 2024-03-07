@@ -9,6 +9,7 @@ class LoadULD {
   String? scheduledDepartureDateTime;
   String? uldSerialNumber;
   String? uld;
+  String? awbNumber;
   List<String>? packageIDs;
 
   LoadULD({
@@ -16,7 +17,8 @@ class LoadULD {
     required this.scheduledDepartureDateTime,
     this.uldSerialNumber,
     required this.packageIDs,
-    this.uld
+    this.uld,
+    this.awbNumber
   });
 
   factory LoadULD.fromJson(Map<String, dynamic> json) =>
