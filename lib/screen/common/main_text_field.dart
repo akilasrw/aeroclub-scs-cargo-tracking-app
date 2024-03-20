@@ -17,6 +17,7 @@ class MainTextField extends StatefulWidget {
   final ValueSetter<bool> onValueChanged;
   final ValueChanged<String>? onChangedText;
   final Widget? suffix;
+  final bool readOnly;
 
   const MainTextField(
       {Key? key,
@@ -34,6 +35,7 @@ class MainTextField extends StatefulWidget {
       this.align = TextAlign.start,
       required this.onValueChanged,
       this.onChangedText,
+        this.readOnly = false,
       this.suffix = const SizedBox()})
       : super(key: key);
 
@@ -60,6 +62,7 @@ class _MainTextFieldState extends State<MainTextField> {
       maxLines: widget.maxLines,
       enabled: widget.enable,
       textAlign: widget.align,
+      readOnly: widget.readOnly,
       style: const TextStyle(
         color: Color(0xFF001C31),
       ),

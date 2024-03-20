@@ -217,6 +217,7 @@ class _UpdateOffloadedCargoPageState extends State<UpdateOffloadedCargoPage> {
                                             labelText: 'Consignment No',
                                             onValueChanged: (bool value) {},
                                             controller: cargoController,
+                                            readOnly : true
                                           ),
                                           const SizedBox(
                                             height: 15,

@@ -166,7 +166,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                                 navigateToNextPage();
                                               } else {
                                                 showAlert(
-                                                    "Please insert the correct username and password!");
+                                                    "Username or Password is incorrect!");
                                               }
                                             }
                                           });
