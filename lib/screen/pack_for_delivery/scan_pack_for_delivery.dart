@@ -302,6 +302,7 @@ class _ScanPackForDeliveryPageState extends State<ScanPackForDeliveryPage> {
 
     BookingStatus? booking = widget.bookingStatus;
     booking?.itemList = bookingItems;
+    booking.packageItemStatus = widget.isPackForDelivery ? 8 : 9;
     var isPacked = await data.handoverCargo(booking);
     if (isPacked) {
       showAlert("Success", "Cargo pick up successfully",true, redirectToHome);

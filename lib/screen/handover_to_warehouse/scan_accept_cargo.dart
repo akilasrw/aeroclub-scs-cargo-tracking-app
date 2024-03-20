@@ -328,8 +328,8 @@ class _ScanAcceptCargoPageState extends State<ScanAcceptCargoPage> {
 
   Future<void> onSubmit(HandoverWarehouseProvider data) async {
     BookingStatus? booking = widget.bookingStatus;
+    booking.packageItemStatus = 1;
     booking?.itemList = bookingItems;
-    data.handoverCargo(booking);
     var isPacked = await data.handoverCargo(booking);
     if(isPacked){
       showAlert("Success", "Cargo handover successful",true,redirectToHome);
