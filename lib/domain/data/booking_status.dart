@@ -9,12 +9,14 @@ class BookingStatus {
   String? truckNo;
   int? awbNumber;
   int? status;
+  int? packageItemStatus;
   List<CargoBookingItem>? itemList;
 
   BookingStatus({
      this.truckNo,
      this.status,
      this.awbNumber,
+    this.packageItemStatus,
     required this.itemList,
   });
 
