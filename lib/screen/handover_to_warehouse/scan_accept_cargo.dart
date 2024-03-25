@@ -332,7 +332,6 @@ class _ScanAcceptCargoPageState extends State<ScanAcceptCargoPage> {
       BookingStatus? booking = widget.bookingStatus;
       booking.packageItemStatus = 1;
       booking?.itemList = bookingItems;
-      data.handoverCargo(booking);
       var isPacked = await data.handoverCargo(booking);
       if(isPacked){
         showAlert("Success", "Cargo handover successful",true,redirectToHome);
