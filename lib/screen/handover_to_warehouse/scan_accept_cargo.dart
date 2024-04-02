@@ -35,6 +35,8 @@ class _ScanAcceptCargoPageState extends State<ScanAcceptCargoPage> {
   final TextEditingController cargoController = TextEditingController();
   List<CargoBookingItem> bookingItems = [];
   List<String> scannedCargo = [];
+  List<String> errorList = [];
+  List<String> awbAssignedPackageList = List.empty();
 
   @override
   Widget build(BuildContext context) {
@@ -256,7 +258,7 @@ class _ScanAcceptCargoPageState extends State<ScanAcceptCargoPage> {
                                               borderRadius:
                                               BorderRadius.circular(10),
                                             ),
-                                            child: _buildQrView(context),
+                                            child: _buildQrView(context,data),
                                           ),
                                         ],
                                       ),
@@ -368,8 +370,9 @@ class _ScanAcceptCargoPageState extends State<ScanAcceptCargoPage> {
     }
   }
 
-  Widget _buildQrView(BuildContext context) {
+  Widget _buildQrView(BuildContext context,HandoverWarehouseProvider data) {
     // For this example we check how width or tall the device is and change the scanArea and overlay accordingly.
+    awbAssignedPackageList = data.bookedPackageItems.map((item) => item.packageRefNumber).toList();
     var scanArea = (MediaQuery.of(context).size.width < 400 ||
         MediaQuery.of(context).size.height < 400)
         ? 150.0
@@ -398,17 +401,23 @@ class _ScanAcceptCargoPageState extends State<ScanAcceptCargoPage> {
 
         if (scanData.code is String &&
             scanData.code != null &&
-            !scannedCargo.contains(scanData.code)) {
-          scanCount++;
-          cargoController.text = scanData.code!;
-          CargoBookingItem bookingItem =
-          CargoBookingItem(
-              status: 1,
-              packageItemId:
-              scanData.code!);
-          bookingItems.add(bookingItem);
-          scannedCargo.add(scanData.code!);
+            !scannedCargo.contains(scanData.code) && !errorList.contains(scanData.code)) {
           FlutterBeep.beep();
+          if(awbAssignedPackageList.contains(scanData.code)){
+            scanCount++;
+            cargoController.text = scanData.code!;
+            CargoBookingItem bookingItem =
+            CargoBookingItem(
+                status: 1,
+                packageItemId:
+                scanData.code!);
+            bookingItems.add(bookingItem);
+            scannedCargo.add(scanData.code!);
+          }
+          else{
+            errorList.add(scanData.code!);
+            showAlert("Error", "This package is not related to any AWB. First assign this package to a AWB",false, onFailMethod);
+          }
         }
       });
     });
