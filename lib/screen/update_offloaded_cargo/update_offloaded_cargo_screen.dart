@@ -19,7 +19,8 @@ import '../common/navbar.dart';
 
 @RoutePage()
 class UpdateOffloadedCargoPage extends StatefulWidget {
-  UpdateOffloadedCargoPage({Key? key}) : super(key: key);
+  BookingStatus bookingStatus;
+  UpdateOffloadedCargoPage({Key? key,required this.bookingStatus}) : super(key: key);
 
   @override
   State<UpdateOffloadedCargoPage> createState() => _UpdateOffloadedCargoPageState();
@@ -294,7 +295,8 @@ class _UpdateOffloadedCargoPageState extends State<UpdateOffloadedCargoPage> {
 
   Future<void> onSubmit(HandoverWarehouseProvider data) async {
     if(bookingItems != null && bookingItems.isNotEmpty){
-      BookingStatus? booking = BookingStatus(itemList: bookingItems);
+      BookingStatus? booking = widget.bookingStatus;
+      booking?.itemList = bookingItems;
       var isPacked = await data.handoverCargo(booking);
 
       if (isPacked) {

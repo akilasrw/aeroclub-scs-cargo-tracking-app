@@ -80,7 +80,7 @@ class HomeDrawer extends StatelessWidget {
             title: const Text('Offload / Return Cargo',
                 style: TextStyle(fontSize: 18, color: Colors.black)),
             onTap: () {
-              context.router.push(UpdateOffloadedCargoRoute());
+              context.router.push(OffloadCargoMainDetailsRoute());
             },
           ): SizedBox(),
           (data.isAdminUser || data.isWarehouseUser) ? ListTile(
