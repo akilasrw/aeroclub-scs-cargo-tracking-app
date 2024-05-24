@@ -6,38 +6,37 @@ import 'package:flutter_beep/flutter_beep.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
-import '../../domain/data/booking_status.dart';
-import '../../domain/data/cargo_booking_item.dart';
-import '../../domain/data/package_filter/package_filter_res.dart';
-import '../../provider/common/status_update_provider.dart';
+import '../../domain/data/load_uld.dart';
 import '../../router/router.gr.dart';
 import '../../utils/app_utils.dart';
 import '../common/main_button.dart';
 import '../common/main_text_field.dart';
 import '../common/navbar.dart';
+import 'package:Cargo_Tracker/domain/data/booking.dart';
+
+import '../load_to_uld/uld_load_provider.dart';
+import '../pickup_cargo/provider.dart';
 
 @RoutePage()
-class ScanAcceptCargoPage extends StatefulWidget {
-  BookingStatus bookingStatus;
+class ScanUnpackULDCargoPage extends StatefulWidget {
+  LoadULD loadULD;
 
-  ScanAcceptCargoPage({Key? key, required this.bookingStatus}) : super(key: key);
+  ScanUnpackULDCargoPage({Key? key, required this.loadULD}) : super(key: key);
 
   @override
-  State<ScanAcceptCargoPage> createState() => _ScanAcceptCargoPageState();
+  State<ScanUnpackULDCargoPage> createState() => _ScanUnpackULDCargoPageState();
 }
 
-class _ScanAcceptCargoPageState extends State<ScanAcceptCargoPage> {
-  Barcode? result;
+class _ScanUnpackULDCargoPageState extends State<ScanUnpackULDCargoPage> {
+
   QRViewController? controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   int scanCount = 0;
-  int originalPackageCount = 0;
   final TextEditingController cargoController = TextEditingController();
   final TextEditingController consignmentNoManualController = TextEditingController();
-  List<CargoBookingItem> bookingItems = [];
-  List<String> scannedCargo = [];
+  List<String> bookingItems = [];
   List<String> errorList = [];
-  List<String> awbAssignedPackageList = List.empty();
+  Map awbAssignedPackageList = {};
 
   @override
   Widget build(BuildContext context) {
@@ -114,9 +113,9 @@ class _ScanAcceptCargoPageState extends State<ScanAcceptCargoPage> {
             body: SafeArea(
                 child: ChangeNotifierProvider(
                     create: (BuildContext context) =>
-                    HandoverWarehouseProvider()..loadScannedPackages(widget.bookingStatus.awbNumber!),
+                    ULDLoadProvider()..loadPackagesByStatus("",false, widget.loadULD.uldSerialNumber!),
                     builder: (context, child) {
-                      return Consumer<HandoverWarehouseProvider>(
+                      return Consumer<ULDLoadProvider>(
                           builder: (da, data, child) {
                             return Stack(
                               children: [
@@ -124,7 +123,7 @@ class _ScanAcceptCargoPageState extends State<ScanAcceptCargoPage> {
                                   top: 0,
                                   right: 0,
                                   left: 0,
-                                  child: Navbar(title: "Scan Cargo",
+                                  child: Navbar(title: "Scan ULD Cargo",
                                       isDeleteButtonRequired: true,
                                       onDeleteButtonClicked: () async {
                                         var res = await Navigator.push(
@@ -134,20 +133,18 @@ class _ScanAcceptCargoPageState extends State<ScanAcceptCargoPage> {
                                               const SimpleBarcodeScannerPage(),
                                             ));
 
-                                          if (res is String && res != '-1') {
-                                            AppUtils.confirmDeletion(context,res, (){
-                                              bool removed = scannedCargo.remove(res);
-                                              bookingItems.removeWhere((item) => item.packageItemId == res);
-                                              if(removed){
-                                                setState(() {
-                                                  scannedCargo;
-                                                  bookingItems;
-                                                  scanCount--;
-                                                });
-                                              }
-                                              Navigator.of(context).pop();
-                                            });
-                                          }
+                                        if (res is String && res != '-1') {
+                                          AppUtils.confirmDeletion(context,res, (){
+                                            bool removed = bookingItems.remove(res);
+                                            if(removed){
+                                              setState(() {
+                                                bookingItems;
+                                                scanCount--;
+                                              });
+                                            }
+                                            Navigator.of(context).pop();
+                                          });
+                                        }
 
                                       }),
                                 ),
@@ -173,32 +170,6 @@ class _ScanAcceptCargoPageState extends State<ScanAcceptCargoPage> {
                                             ),
                                             child: Column(
                                               children: [
-                                                Row(
-                                                  children: [
-                                                    Container(
-                                                      padding: const EdgeInsets.all(10),
-                                                      decoration: const BoxDecoration(
-                                                        color: Colors.blue,
-                                                        shape: BoxShape.circle,
-                                                      ),
-                                                      child: Center(
-                                                        child: Text(
-                                                          "${data.bookedPackageItems.length}",
-                                                          style: TextStyle(color: Colors.white),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    const SizedBox(
-                                                      width: 10,
-                                                    ),
-                                                    const Text(
-                                                      "Original Package Count",
-                                                      style: TextStyle(
-                                                        color: Color(0xFF0D1B26),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
                                                 const SizedBox(
                                                   height: 15,
                                                 ),
@@ -294,11 +265,22 @@ class _ScanAcceptCargoPageState extends State<ScanAcceptCargoPage> {
                                                           TextButton(
                                                             onPressed: (){
                                                               if (consignmentNoManualController.text != null &&
-                                                                  consignmentNoManualController.text != "" ) {
-                                                                bool isSuccess = _addScannedDataToList(consignmentNoManualController.text!);
-                                                                if(isSuccess){
+                                                                  consignmentNoManualController.text != "" &&
+                                                                  !bookingItems.contains(consignmentNoManualController.text)) {
+
+                                                                if(awbAssignedPackageList.containsKey(consignmentNoManualController.text)){
+                                                                  scanCount++;
+                                                                  cargoController.text = consignmentNoManualController.text!;
+                                                                  bookingItems.add(consignmentNoManualController.text!);
+                                                                  //FlutterBeep.beep();
+                                                                  showAlert("AWB", "AWB No : " +
+                                                                      awbAssignedPackageList[consignmentNoManualController.text!].toString(),true, onFailMethod);
+                                                                  //Navigator.of(context).pop();
+                                                                  //showAlert("AWB", "AWB No : " + awbAssignedPackageList[consignmentNoManualController.text!],true, onFailMethod);
                                                                   consignmentNoManualController.clear();
-                                                                  Navigator.of(context).pop();
+                                                                }
+                                                                else{
+                                                                  showAlert("Error", "Please check package id and corresponding ULD",false, onFailMethod);
                                                                 }
                                                               }
                                                               else{
@@ -312,7 +294,7 @@ class _ScanAcceptCargoPageState extends State<ScanAcceptCargoPage> {
                                                             ),
                                                           ),
                                                           TextButton(
-                                                          onPressed: () {
+                                                            onPressed: () {
                                                               consignmentNoManualController.clear();
                                                               Navigator.of(context).pop();
                                                             },
@@ -425,14 +407,15 @@ class _ScanAcceptCargoPageState extends State<ScanAcceptCargoPage> {
         ));
   }
 
-  Future<void> onSubmit(HandoverWarehouseProvider data) async {
+  Future<void> onSubmit(ULDLoadProvider data) async {
     if(bookingItems != null && bookingItems.length > 0){
-      BookingStatus? booking = widget.bookingStatus;
-      booking.packageItemStatus = 2;
-      booking?.itemList = bookingItems;
-      var isPacked = await data.handoverCargo(booking);
+      bool isPacked = false;
+        LoadULD? loadUld = widget.loadULD;
+        loadUld?.packageIDs = bookingItems;
+        isPacked = await data.unpackToULD(loadUld);
+
       if(isPacked){
-        showAlert("Success", "Cargo handover successful",true,redirectToHome);
+        showAlert("Success", "ULD unpacked successfully",true,redirectToHome);
       }
       else{
         showAlert("Error", "Something went wrong",false, onFailMethod);
@@ -455,20 +438,9 @@ class _ScanAcceptCargoPageState extends State<ScanAcceptCargoPage> {
     Navigator.of(context).pop();
   }
 
-  void validateScannedCargo(List<PackageFilterRes> bookedPackageItems){
-    if(bookedPackageItems.length != bookingItems.length){
-
-    }
-    for(PackageFilterRes package in bookedPackageItems){
-      if(bookingItems.contains(package.packageRefNumber)){
-
-      }
-    }
-  }
-
-  Widget _buildQrView(BuildContext context,HandoverWarehouseProvider data) {
+  Widget _buildQrView(BuildContext context,ULDLoadProvider data) {
     // For this example we check how width or tall the device is and change the scanArea and overlay accordingly.
-    awbAssignedPackageList = data.bookedPackageItems.map((item) => item.packageRefNumber).toList();
+    awbAssignedPackageList = data.packageRefAwbNoMap;
     var scanArea = (MediaQuery.of(context).size.width < 400 ||
         MediaQuery.of(context).size.height < 400)
         ? 150.0
@@ -493,37 +465,23 @@ class _ScanAcceptCargoPageState extends State<ScanAcceptCargoPage> {
     });
     controller.scannedDataStream.listen((scanData) {
       setState(() {
-        result = scanData;
+        if (scanData.code is String && scanData.code != null &&
+            !bookingItems.contains(scanData.code) && !errorList.contains(scanData.code)) {
 
-        if (scanData.code is String) {
-          _addScannedDataToList(scanData.code!);
+          if(awbAssignedPackageList.containsKey(scanData.code)){
+            scanCount++;
+            cargoController.text = scanData.code!;
+            bookingItems.add(scanData.code!);
+            FlutterBeep.beep();
+            showAlert("AWB", "AWB No : " + awbAssignedPackageList[scanData.code!].toString(),true, onFailMethod);
+          }
+          else{
+            errorList.add(scanData.code!);
+            showAlert("Error", "Please check package id and corresponding ULD",false, onFailMethod);
+          }
         }
       });
     });
-  }
-
-  bool _addScannedDataToList(String scanData){
-    if (scanData != null &&
-        !scannedCargo.contains(scanData) && !errorList.contains(scanData)) {
-      FlutterBeep.beep();
-      if(awbAssignedPackageList.contains(scanData)){
-        scanCount++;
-        cargoController.text = scanData!;
-        CargoBookingItem bookingItem =
-        CargoBookingItem(
-            status: 2,
-            packageItemId:
-            scanData!);
-        bookingItems.add(bookingItem);
-        scannedCargo.add(scanData!);
-        return true;
-      }
-      else{
-        errorList.add(scanData!);
-        showAlert("Error", "This package is not related to any AWB. First assign this package to a AWB",false, onFailMethod);
-      }
-    }
-    return false;
   }
 
   void _onPermissionSet(BuildContext context, QRViewController ctrl, bool p) {

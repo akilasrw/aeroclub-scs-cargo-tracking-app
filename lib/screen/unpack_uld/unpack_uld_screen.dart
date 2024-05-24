@@ -4,7 +4,6 @@ import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
 
 import '../../domain/data/flight.dart';
 import '../../domain/data/load_uld.dart';
@@ -12,26 +11,22 @@ import '../../domain/data/uld_flight_schedule.dart';
 import '../../utils/app_utils.dart';
 import '../../utils/constants.dart';
 import '../common/main_button.dart';
-import '../common/main_text_field.dart';
 import '../common/navbar.dart';
 import '../load_to_uld/uld_load_provider.dart';
 
 @RoutePage()
-class ULDCargoLoadingPage extends StatefulWidget {
-  final bool isCargoLoading;
+class UnpackULDPage extends StatefulWidget {
 
-  const ULDCargoLoadingPage({Key? key, required this.isCargoLoading})
+  const UnpackULDPage({Key? key})
       : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _ULDCargoLoadingPageState();
+  State<StatefulWidget> createState() => _UnpackULDPageState();
 }
 
-class _ULDCargoLoadingPageState extends State<ULDCargoLoadingPage> {
-  final TextEditingController uldNumberController = TextEditingController();
+class _UnpackULDPageState extends State<UnpackULDPage> {
   Flight? flight = null;
   final TextEditingController dateController = TextEditingController();
-  final TextEditingController awbController = TextEditingController();
   String? selectedUld = null;
 
   @override
@@ -56,9 +51,7 @@ class _ULDCargoLoadingPageState extends State<ULDCargoLoadingPage> {
                               right: 0,
                               left: 0,
                               child: Navbar(
-                                  title: widget.isCargoLoading
-                                      ? "Pack ULD"
-                                      : "Unpack ULD"),
+                                  title:"Unpack ULD"),
                             ),
                             Positioned(
                               left: 0,
@@ -102,7 +95,6 @@ class _ULDCargoLoadingPageState extends State<ULDCargoLoadingPage> {
                                         DateTimeField(
                                           format: DateFormat("yyyy-MM-dd"),
                                           onChanged: (value ){
-                                            if(!widget.isCargoLoading){
                                               if(flight != null){
                                                   var uldFlightSchedule = ULDFlightSchedule(
                                                       flightNumber : flight!.value,
@@ -110,7 +102,6 @@ class _ULDCargoLoadingPageState extends State<ULDCargoLoadingPage> {
                                                   );
                                                   data.getULDs(uldFlightSchedule);
                                               }
-                                            }
                                           },
                                           controller: dateController,
                                           textAlign: TextAlign.left,
@@ -164,22 +155,7 @@ class _ULDCargoLoadingPageState extends State<ULDCargoLoadingPage> {
                                         const SizedBox(
                                           height: 10,
                                         ),
-                                        widget.isCargoLoading
-                                            ? Row(
-                                                children: [
-                                                  Expanded(
-                                                    flex: 1,
-                                                    child: MainTextField(
-                                                      labelText: 'ULD Number',
-                                                      onValueChanged:
-                                                          (bool value) {},
-                                                      controller:
-                                                          uldNumberController,
-                                                    ),
-                                                  ),
-                                                ],
-                                              )
-                                            : DropdownButtonFormField<String>(
+                                        DropdownButtonFormField<String>(
                                                 isExpanded: true,
                                                 icon: const Icon(Icons
                                                     .arrow_drop_down_circle_rounded),
@@ -207,50 +183,6 @@ class _ULDCargoLoadingPageState extends State<ULDCargoLoadingPage> {
                                               ),
                                         const SizedBox(
                                           height: 10,
-                                        ),
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              flex: 1,
-                                              child: MainTextField(
-                                                labelText: 'AWB No',
-                                                onValueChanged: (bool value) {},
-                                                controller: awbController,
-                                              ),
-                                            ),
-                                            const SizedBox(
-                                              width: 8,
-                                            ),
-                                            InkWell(
-                                              onTap: () async {
-                                                var res = await Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          const SimpleBarcodeScannerPage(),
-                                                    ));
-                                                setState(() {
-                                                  if (res is String) {
-                                                    awbController.text = res;
-                                                  }
-                                                });
-                                              },
-                                              child: Container(
-                                                width: 40,
-                                                height: 40,
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(5),
-                                                  color: Colors.blue,
-                                                ),
-                                                child: const Icon(
-                                                  Icons.qr_code,
-                                                  size: 25,
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
                                         ),
                                         const SizedBox(
                                           height: 10,
@@ -294,8 +226,7 @@ class _ULDCargoLoadingPageState extends State<ULDCargoLoadingPage> {
                                           });
                                           return;
                                         }
-                                        if ((uldNumberController.text.isEmpty && widget.isCargoLoading)
-                                            || (!widget.isCargoLoading && selectedUld == null)) {
+                                        if (selectedUld == null) {
                                           AppUtils.showAlert(
                                               context,
                                               'Error',
@@ -305,39 +236,15 @@ class _ULDCargoLoadingPageState extends State<ULDCargoLoadingPage> {
                                           });
                                           return;
                                         }
-                                        if (awbController.text.isEmpty) {
-                                          AppUtils.showAlert(
-                                              context,
-                                              'Error',
-                                              "Please add awb number",
-                                              false, () {
-                                            Navigator.of(context).pop();
-                                          });
-                                          return;
-                                        }
-                                        if (awbController.text.length != 11) {
-                                          AppUtils.showAlert(
-                                              context,
-                                              'Error',
-                                              "AWB number should contain 11 numbers.",
-                                              false, () {
-                                            Navigator.of(context).pop();
-                                          });
-                                          return;
-                                        }
                                         var loadULD = LoadULD(
                                             flightID: flight?.id,
                                             scheduledDepartureDateTime:
                                                 dateController.text,
-                                            uldSerialNumber:
-                                                widget.isCargoLoading ? uldNumberController.text : selectedUld,
-                                            uld: uldNumberController.text,
-                                            awbNumber: awbController.text,
+                                            uldSerialNumber: selectedUld,
+                                            uld: selectedUld,
                                             packageIDs: null);
-                                        context.router.push(ScanULDCargoRoute(
-                                            loadULD: loadULD,
-                                            isCargoLoading:
-                                                widget.isCargoLoading));
+                                        context.router.push(ScanUnpackULDCargoRoute(
+                                            loadULD: loadULD));
                                       },
                                     ),
                                   ),

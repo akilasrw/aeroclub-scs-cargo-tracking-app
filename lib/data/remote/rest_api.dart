@@ -15,6 +15,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:retrofit/retrofit.dart';
 
 import '../../domain/data/base_response.dart';
+import '../../domain/data/package_awb.dart';
 import '../../domain/data/package_filter/package_filter_req.dart';
 import '../../domain/data/package_filter/package_filter_res.dart';
 import '../../domain/data/uld_flight_schedule.dart';
@@ -61,4 +62,9 @@ abstract class RestClient {
   @GET("/api/v1/Package/GetFilteredAllList")
   Future<List<PackageFilterRes>?> getPackageListByAWB(@Body() PackageFilterReq packageFilterReq);
 
+  @GET("/api/v1/Package/GetListByAwbAndStatus")
+  Future<List<String>?> getListByAwbAndStatus(@Body() PackageFilterReq packageFilterReq);
+
+  @GET("/api/v1/Package/PackageByAwbAndUld")
+  Future<List<PackageAWB>?> getListByAwbAndUld(@Body() PackageFilterReq packageFilterReq);
 }

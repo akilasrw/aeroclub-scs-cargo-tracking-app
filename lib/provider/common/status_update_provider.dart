@@ -16,6 +16,7 @@ import '../../domain/shared/constants.dart';
 class HandoverWarehouseProvider extends BaseProvider {
   late Repository repository;
   List<PackageFilterRes> bookedPackageItems = List.empty();
+  List<String> packagesByStatus = List.empty();
 
   HandoverWarehouseProvider() {
     repository = repository = GetIt.I<Repository>();
@@ -41,6 +42,29 @@ class HandoverWarehouseProvider extends BaseProvider {
       }
     }
     setLoading(false);
+    notifyListeners();
+  }
+
+  getPreviousStatusPackages(int awbNumber, int statusVal1, int statusVal2) async {
+    try {
+      //Future.delayed(const Duration(seconds: 2));
+      List<int> status = [];
+        status.add(statusVal1);
+        if(statusVal2 != -1){
+          status.add(statusVal2);
+        }
+
+      var response = await repository!.getListByAwbAndStatus(PackageFilterReq
+        (awbNumber:  awbNumber , packageItemStatuses: status));
+      if (response != null) {
+        packagesByStatus = response;
+      }
+    } catch (e) {
+      setLoading(false);
+      if (kDebugMode) {
+        print(e);
+      }
+    }
     notifyListeners();
   }
 

@@ -25,6 +25,7 @@ class FlightLoadingProvider extends BaseProvider {
   List<Flight> flightList = List.empty();
   List<ULD> uldList = List.empty();
   var uldSerialNumberIdMap = {};
+  var uldSerialNumberStatusMap = {};
   List<String> uldSerialNumberList = [];
 
   initProvider() async {
@@ -42,7 +43,7 @@ class FlightLoadingProvider extends BaseProvider {
     notifyListeners();
   }
 
-  getULDs(ULDFlightSchedule uldFlightSchedule) async {
+  getULDs(ULDFlightSchedule uldFlightSchedule, bool isFlightLoading) async {
     try {
       setLoading(true);
       var response = await repository!.getFlightsULDs(uldFlightSchedule);
@@ -50,8 +51,11 @@ class FlightLoadingProvider extends BaseProvider {
 
         uldList = response;
         for(ULD uld in uldList){
-          uldSerialNumberIdMap[uld.serialNumber] = uld.id;
-          uldSerialNumberList.add(uld.serialNumber);
+          if((isFlightLoading && uld.status == 1) || (!isFlightLoading && uld.status == 2)){
+            uldSerialNumberIdMap[uld.serialNumber] = uld.id;
+            uldSerialNumberList.add(uld.serialNumber);
+            uldSerialNumberStatusMap[uld.serialNumber] = uld.status;
+          }
         }
       }
     } catch (e) {

@@ -51,7 +51,7 @@ class _ScanCargoState extends State<LoadULDToFlightPage> {
                               margin: const EdgeInsets.all(30.0),
                               child: ChangeNotifierProvider(
                                   create: (BuildContext context) =>
-                                      FlightLoadingProvider()..getULDs(widget.uldFlightSchedule),
+                                      FlightLoadingProvider()..getULDs(widget.uldFlightSchedule, widget.isFlightLoading),
                                   builder: (context, child) {
                                     return Consumer<FlightLoadingProvider>(
                                         builder: (da, data, child) {

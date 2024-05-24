@@ -31,8 +31,11 @@ class _ScanPackForDeliveryPageState extends State<ScanPackForDeliveryPage> {
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   int scanCount = 0;
   final TextEditingController cargoController = TextEditingController();
+  final TextEditingController consignmentNoManualController = TextEditingController();
   List<CargoBookingItem> bookingItems = [];
   List<String> scannedCargo = [];
+  List<String> errorList = [];
+  List<String> awbAssignedPackageList = List.empty();
 
   @override
   Widget build(BuildContext context) {
@@ -109,7 +112,7 @@ class _ScanPackForDeliveryPageState extends State<ScanPackForDeliveryPage> {
             body: SafeArea(
                 child: ChangeNotifierProvider(
                     create: (BuildContext context) =>
-                    HandoverWarehouseProvider()..initProvider(),
+                    HandoverWarehouseProvider()..getPreviousStatusPackages(widget.bookingStatus.awbNumber!,7,-1),
                     builder: (context, child) {
                       return Consumer<HandoverWarehouseProvider>(
                           builder: (da, data, child) {
@@ -210,11 +213,117 @@ class _ScanPackForDeliveryPageState extends State<ScanPackForDeliveryPage> {
                                           const SizedBox(
                                             height: 15,
                                           ),
-                                          MainTextField(
-                                            labelText: 'Consignment No',
-                                            onValueChanged: (bool value) {},
-                                            controller: cargoController,
-                                            readOnly : true
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                flex: 1,
+                                                child: MainTextField(
+                                                    labelText: 'Consignment No',
+                                                    onValueChanged: (bool value) {},
+                                                    controller: cargoController,
+                                                    readOnly : true
+                                                ),
+                                              ),
+                                              const SizedBox(
+                                                width: 8,
+                                              ),
+                                              InkWell(
+                                                onTap: () async {
+                                                  await showDialog(
+                                                      context: context,
+                                                      builder: (_) => AlertDialog(
+                                                        shape: const RoundedRectangleBorder(
+                                                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                                                            side: BorderSide(color: Color(0xFF032F50))
+                                                        ),
+                                                        backgroundColor: const Color(0xFF001C31),
+                                                        title: Row(
+                                                          children: [
+                                                            Icon(
+                                                              Icons.keyboard,
+                                                              color :Colors.deepOrangeAccent,
+                                                              size: 35.0,
+                                                            ),
+                                                            SizedBox(
+                                                              width: 15,
+                                                            ),
+
+                                                            Text(
+                                                              'Manual Entry',
+                                                              style: TextStyle(
+                                                                  fontSize: 18,
+                                                                  color: Colors.white),
+
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        content: MainTextField(
+                                                          labelText: 'Consignment No',
+                                                          onValueChanged: (bool value) {},
+                                                          controller: consignmentNoManualController,
+                                                        ),
+                                                        actions: [
+                                                          TextButton(
+                                                            onPressed: (){
+                                                              if (consignmentNoManualController.text != null &&
+                                                                  consignmentNoManualController.text != "" &&
+                                                                  !scannedCargo.contains(consignmentNoManualController.text)) {
+                                                                if(awbAssignedPackageList.contains(consignmentNoManualController.text)){
+                                                                  scanCount++;
+                                                                  cargoController.text = consignmentNoManualController.text!;
+                                                                  CargoBookingItem bookingItem = CargoBookingItem(
+                                                                      status: widget.isPackForDelivery ? 8 : 9,
+                                                                      packageItemId: consignmentNoManualController.text!);
+                                                                  bookingItems.add(bookingItem);
+                                                                  scannedCargo.add(consignmentNoManualController.text!);
+                                                                  FlutterBeep.beep();
+                                                                  consignmentNoManualController.clear();
+                                                                  Navigator.of(context).pop();
+                                                                }
+                                                                else{
+                                                                  showAlert("Error", "Please unpack from ULD prior to delivery",false, onFailMethod);
+                                                                }
+                                                              }
+                                                              else{
+                                                                showAlert("Error", 'Invalid input',false, onFailMethod);
+                                                              }
+                                                            },
+                                                            child: const Text('Ok',
+                                                              style: TextStyle(
+                                                                  fontSize: 14,
+                                                                  color: Colors.redAccent),
+                                                            ),
+                                                          ),
+                                                          TextButton(
+                                                            onPressed: () {
+                                                              consignmentNoManualController.clear();
+                                                              Navigator.of(context).pop();
+                                                            },
+                                                            child: const Text('Cancel',
+                                                              style: TextStyle(
+                                                                  fontSize: 14,
+                                                                  color: Colors.green),
+                                                            ),
+                                                          )
+                                                        ],
+                                                      ));
+                                                },
+                                                child: Container(
+                                                  width: 40,
+                                                  height: 40,
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                    BorderRadius.circular(5),
+                                                    color: Colors.blue,
+                                                  ),
+                                                  child: const Icon(
+                                                    Icons.keyboard,
+                                                    size: 25,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                           const SizedBox(
                                             height: 15,
@@ -228,7 +337,7 @@ class _ScanPackForDeliveryPageState extends State<ScanPackForDeliveryPage> {
                                               borderRadius:
                                               BorderRadius.circular(10),
                                             ),
-                                            child: _buildQrView(context),
+                                            child: _buildQrView(context,data),
                                           ),
                                         ],
                                       ),
@@ -329,8 +438,9 @@ class _ScanPackForDeliveryPageState extends State<ScanPackForDeliveryPage> {
     Navigator.of(context).pop();
   }
 
-  Widget _buildQrView(BuildContext context) {
+  Widget _buildQrView(BuildContext context,HandoverWarehouseProvider data) {
     // For this example we check how width or tall the device is and change the scanArea and overlay accordingly.
+    awbAssignedPackageList = data.packagesByStatus;
     var scanArea = (MediaQuery.of(context).size.width < 400 ||
         MediaQuery.of(context).size.height < 400)
         ? 150.0
@@ -357,15 +467,21 @@ class _ScanPackForDeliveryPageState extends State<ScanPackForDeliveryPage> {
       setState(() {
         if (scanData.code is String &&
             scanData.code != null &&
-            !scannedCargo.contains(scanData.code)) {
-          scanCount++;
-          cargoController.text = scanData.code!;
-          CargoBookingItem bookingItem = CargoBookingItem(
-              status: widget.isPackForDelivery ? 8 : 9,
-              packageItemId: scanData.code!);
-          bookingItems.add(bookingItem);
-          scannedCargo.add(scanData.code!);
-          FlutterBeep.beep();
+            !scannedCargo.contains(scanData.code) && !errorList.contains(scanData.code)) {
+          if(awbAssignedPackageList.contains(scanData.code)){
+            scanCount++;
+            cargoController.text = scanData.code!;
+            CargoBookingItem bookingItem = CargoBookingItem(
+                status: widget.isPackForDelivery ? 8 : 9,
+                packageItemId: scanData.code!);
+            bookingItems.add(bookingItem);
+            scannedCargo.add(scanData.code!);
+            FlutterBeep.beep();
+          }
+          else{
+            errorList.add(scanData.code!);
+            showAlert("Error", "Please unpack from ULD prior to delivery",false, onFailMethod);
+          }
         }
       });
     });

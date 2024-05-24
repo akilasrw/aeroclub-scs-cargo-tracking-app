@@ -20,6 +20,9 @@ class AppRouter extends $AppRouter {
     AutoRoute(page: PackForDeliveryRoute.page),
     AutoRoute(page: ScanPackForDeliveryRoute.page),
     AutoRoute(page: UpdateOffloadedCargoRoute.page),
-    AutoRoute(page: ULDPackListRoute.page)
+    AutoRoute(page: ULDPackListRoute.page),
+    AutoRoute(page: OffloadCargoMainDetailsRoute.page),
+    AutoRoute(page: UnpackULDRoute.page),
+    AutoRoute(page: ScanUnpackULDCargoRoute.page)
   ];
 }

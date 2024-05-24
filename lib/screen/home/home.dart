@@ -19,7 +19,10 @@ class HomePage extends StatelessWidget {
     var _localStorage = LocalStorage();
     final MediaQueryData _mediaQueryData = MediaQuery.of(context);
     final logoWidth = _mediaQueryData.size.width * 0.12;
-    return Scaffold(
+
+    return PopScope(
+        canPop: false,
+      child: Scaffold(
       backgroundColor: mainColor,
       appBar: AppBar(
         backgroundColor: mainColor,
@@ -92,7 +95,7 @@ class HomePage extends StatelessWidget {
         ),
       ),
 
-    );
+    ));
   }
 
   void verifyLogout(BuildContext context,LocalStorage _localStorage){

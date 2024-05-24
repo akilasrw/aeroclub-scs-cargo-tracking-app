@@ -31,6 +31,7 @@ class _ScanCargoPageState extends State<ScanCargoPage> {
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   int scanCount = 0;
   final TextEditingController cargoController = TextEditingController();
+  final TextEditingController consignmentNoManualController = TextEditingController();
   List<String> bookingItems = [];
 
 
@@ -198,11 +199,111 @@ class _ScanCargoPageState extends State<ScanCargoPage> {
                                       const SizedBox(
                                         height: 15,
                                       ),
-                                      MainTextField(
-                                        labelText: 'Consignment No',
-                                        onValueChanged: (bool value) {},
-                                        controller: cargoController,
-                                        readOnly : true
+
+
+
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            flex: 1,
+                                            child: MainTextField(
+                                                labelText: 'Consignment No',
+                                                onValueChanged: (bool value) {},
+                                                controller: cargoController,
+                                                readOnly : true
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            width: 8,
+                                          ),
+                                          InkWell(
+                                            onTap: () async {
+                                              await showDialog(
+                                                  context: context,
+                                                  builder: (_) => AlertDialog(
+                                                    shape: const RoundedRectangleBorder(
+                                                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                                                        side: BorderSide(color: Color(0xFF032F50))
+                                                    ),
+                                                    backgroundColor: const Color(0xFF001C31),
+                                                    title: Row(
+                                                      children: [
+                                                        Icon(
+                                                          Icons.keyboard,
+                                                          color :Colors.deepOrangeAccent,
+                                                          size: 35.0,
+                                                        ),
+                                                        SizedBox(
+                                                          width: 15,
+                                                        ),
+
+                                                        Text(
+                                                          'Manual Entry',
+                                                          style: TextStyle(
+                                                              fontSize: 18,
+                                                              color: Colors.white),
+
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    content: MainTextField(
+                                                        labelText: 'Consignment No',
+                                                        onValueChanged: (bool value) {},
+                                                        controller: consignmentNoManualController,
+                                                    ),
+                                                    actions: [
+                                                      TextButton(
+                                                        onPressed: (){
+                                                          if (consignmentNoManualController.text != null &&
+                                                              consignmentNoManualController.text != "" &&
+                                                              !bookingItems.contains(consignmentNoManualController.text)) {
+                                                            scanCount++;
+                                                            cargoController.text = consignmentNoManualController.text!;
+                                                            bookingItems.add(consignmentNoManualController.text!);
+                                                            FlutterBeep.beep();
+                                                            consignmentNoManualController.clear();
+                                                            Navigator.of(context).pop();
+                                                          }
+                                                          else{
+                                                            showAlert("Error", 'Invalid input',false, onFailMethod);
+                                                          }
+                                                        },
+                                                        child: const Text('Ok',
+                                                          style: TextStyle(
+                                                              fontSize: 14,
+                                                              color: Colors.redAccent),
+                                                        ),
+                                                      ),
+                                                      TextButton(
+                                                        onPressed: () {
+                                                          consignmentNoManualController.clear();
+                                                          Navigator.of(context).pop();
+                                                        },
+                                                        child: const Text('Cancel',
+                                                          style: TextStyle(
+                                                              fontSize: 14,
+                                                              color: Colors.green),
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ));
+                                            },
+                                            child: Container(
+                                              width: 40,
+                                              height: 40,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                BorderRadius.circular(5),
+                                                color: Colors.blue,
+                                              ),
+                                              child: const Icon(
+                                                Icons.keyboard,
+                                                size: 25,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                       const SizedBox(
                                         height: 15,

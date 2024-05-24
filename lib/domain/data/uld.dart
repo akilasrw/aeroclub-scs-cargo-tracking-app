@@ -6,9 +6,11 @@ part 'uld.g.dart';
 class ULD {
   String id;
   String serialNumber;
+  int status;
 
   ULD({required this.id,
-      required this.serialNumber});
+      required this.serialNumber,
+      required this.status});
 
   factory ULD.fromJson(Map<String, dynamic> json) =>
       _$ULDFromJson(json);

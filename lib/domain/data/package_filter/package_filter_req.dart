@@ -4,11 +4,15 @@ part 'package_filter_req.g.dart';
 
 @JsonSerializable()
 class PackageFilterReq {
-  int awbNumber;
-  bool includeCargoBooking;
+  int? awbNumber;
+  bool? includeCargoBooking;
+  List<int>? packageItemStatuses;
+  String? uld;
 
-  PackageFilterReq({required this.awbNumber,
-    required this.includeCargoBooking});
+  PackageFilterReq({this.awbNumber,
+    this.includeCargoBooking,
+  this.packageItemStatuses,
+  this.uld});
 
   factory PackageFilterReq.fromJson(Map<String, dynamic> json) =>
       _$PackageFilterReqFromJson(json);

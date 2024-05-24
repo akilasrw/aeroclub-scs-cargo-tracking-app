@@ -18,6 +18,7 @@ import 'package:get_it/get_it.dart';
 
 import '../domain/data/base_response.dart';
 import '../domain/data/load_uld_to_flight_request.dart';
+import '../domain/data/package_awb.dart';
 import '../domain/data/package_filter/package_filter_req.dart';
 import '../domain/data/package_filter/package_filter_res.dart';
 import '../domain/data/uld_flight_schedule.dart';
@@ -212,5 +213,15 @@ class RepositoryImpl implements Repository {
   @override
   Future<List<PackageFilterRes>?> getPackageListByAWB(PackageFilterReq packageFilterReq) {
     return _restClient!.getPackageListByAWB(packageFilterReq);
+  }
+
+  @override
+  Future<List<String>?> getListByAwbAndStatus(PackageFilterReq packageFilterReq) {
+    return _restClient!.getListByAwbAndStatus(packageFilterReq);
+  }
+
+  @override
+  Future<List<PackageAWB>?> getListByAwbAndUld(PackageFilterReq packageFilterReq) {
+    return _restClient!.getListByAwbAndUld(packageFilterReq);
   }
 }
