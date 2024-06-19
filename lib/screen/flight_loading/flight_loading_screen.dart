@@ -84,7 +84,7 @@ class _FlightLoadingScreenState extends State<FlightLoadingScreen> {
                                                       (Flight value) {
                                                     return DropdownMenuItem<Flight>(
                                                       value: value,
-                                                      child: Text(value.value),
+                                                      child: Text(value.flightNumber),
                                                     );
                                                   }).toList(),
                                             ),
@@ -168,7 +168,7 @@ class _FlightLoadingScreenState extends State<FlightLoadingScreen> {
                                               return;
                                             }
                                             var uldFlightSchedule = ULDFlightSchedule(
-                                                flightNumber : flight!.value,
+                                                flightNumber : flight!.flightNumber,
                                                 scheduledDepartureDateTime : dateController.text
                                             );
                                             context.router.push(ULDPackListRoute(uldFlightSchedule: uldFlightSchedule,

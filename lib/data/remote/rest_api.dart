@@ -16,8 +16,10 @@ import 'package:retrofit/retrofit.dart';
 
 import '../../domain/data/base_response.dart';
 import '../../domain/data/package_awb.dart';
+import '../../domain/data/package_filter/awb_filter.dart';
 import '../../domain/data/package_filter/package_filter_req.dart';
 import '../../domain/data/package_filter/package_filter_res.dart';
+import '../../domain/data/sector.dart';
 import '../../domain/data/uld_flight_schedule.dart';
 
 part 'rest_api.g.dart';
@@ -44,7 +46,7 @@ abstract class RestClient {
   @PUT("/api/v1/Package/UpdateStatusByPackage")
   Future<BaseResponse> updateStatusByPackage(@Body() BookingStatus bookingStatus);
 
-  @GET("/api/v1/Flight/getSelectList")
+  @GET("/api/v1/Flight/getSelectListWithSectors")
   Future<List<Flight>?> getFlights();
 
   @POST("/api/v1/Package/CreateFlightScheduleULDandUpdateStatus")
@@ -67,4 +69,7 @@ abstract class RestClient {
 
   @GET("/api/v1/Package/PackageByAwbAndUld")
   Future<List<PackageAWB>?> getListByAwbAndUld(@Body() PackageFilterReq packageFilterReq);
+
+  @GET("/api/v1/CargoBooking/GetAirportsbyAWB")
+  Future<Sector?> getAirportsByAWB(@Body() AWBFilter awbFilter);
 }

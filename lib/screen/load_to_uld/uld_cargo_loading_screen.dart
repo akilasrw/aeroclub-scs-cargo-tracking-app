@@ -8,6 +8,7 @@ import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
 
 import '../../domain/data/flight.dart';
 import '../../domain/data/load_uld.dart';
+import '../../domain/data/sector.dart';
 import '../../domain/data/uld_flight_schedule.dart';
 import '../../utils/app_utils.dart';
 import '../../utils/constants.dart';
@@ -92,7 +93,7 @@ class _ULDCargoLoadingPageState extends State<ULDCargoLoadingPage> {
                                                   (Flight value) {
                                             return DropdownMenuItem<Flight>(
                                               value: value,
-                                              child: Text(value.value),
+                                              child: Text(value.flightNumber),
                                             );
                                           }).toList(),
                                         ),
@@ -105,7 +106,7 @@ class _ULDCargoLoadingPageState extends State<ULDCargoLoadingPage> {
                                             if(!widget.isCargoLoading){
                                               if(flight != null){
                                                   var uldFlightSchedule = ULDFlightSchedule(
-                                                      flightNumber : flight!.value,
+                                                      flightNumber : flight!.flightNumber,
                                                       scheduledDepartureDateTime : dateController.text
                                                   );
                                                   data.getULDs(uldFlightSchedule);
@@ -325,19 +326,7 @@ class _ULDCargoLoadingPageState extends State<ULDCargoLoadingPage> {
                                           });
                                           return;
                                         }
-                                        var loadULD = LoadULD(
-                                            flightID: flight?.id,
-                                            scheduledDepartureDateTime:
-                                                dateController.text,
-                                            uldSerialNumber:
-                                                widget.isCargoLoading ? uldNumberController.text : selectedUld,
-                                            uld: uldNumberController.text,
-                                            awbNumber: awbController.text,
-                                            packageIDs: null);
-                                        context.router.push(ScanULDCargoRoute(
-                                            loadULD: loadULD,
-                                            isCargoLoading:
-                                                widget.isCargoLoading));
+                                        validateAWBWithFlight(data);
                                       },
                                     ),
                                   ),
@@ -381,22 +370,49 @@ class _ULDCargoLoadingPageState extends State<ULDCargoLoadingPage> {
                     }))));
   }
 
-  void showAlert(String msg) {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text("ERROR!"),
-            content: Text(msg),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text('OK'),
-              ),
-            ],
-          );
-        });
+  void validateAWBWithFlight(ULDLoadProvider provider) async{
+
+    String awbNo = awbController.text;
+    Sector? sector= await provider.getAirportsByAWB(int.parse(awbNo));
+    if(sector != null && checkIsValidSector(sector)){
+      var loadULD = LoadULD(
+          flightID: flight?.flightId,
+          scheduledDepartureDateTime:
+          dateController.text,
+          uldSerialNumber:
+          widget.isCargoLoading ? uldNumberController.text : selectedUld,
+          uld: uldNumberController.text,
+          awbNumber: awbController.text,
+          packageIDs: null);
+      context.router.push(ScanULDCargoRoute(
+          loadULD: loadULD,
+          isCargoLoading:
+          widget.isCargoLoading));
+    }
+    else{
+      AppUtils.showAlert(
+          context,
+          'Error',
+          "This AWB doesn't match with the flight",
+          false, () {
+        Navigator.of(context).pop();
+      });
+    }
+
+  }
+
+  bool checkIsValidSector(Sector awbSector){
+    bool isValidSector = false;
+    List<Sector> sectors = flight!.sectors!;
+    for(Sector sector in sectors){
+      if(awbSector.destinationCode == sector.destinationCode && awbSector.originCode == sector.originCode){
+        isValidSector = true;
+      }
+    }
+    if(!isValidSector && awbSector.destinationCode == flight!.destinationCode
+        && awbSector.originCode == flight!.originCode){
+      isValidSector = true;
+    }
+    return isValidSector;
   }
 }

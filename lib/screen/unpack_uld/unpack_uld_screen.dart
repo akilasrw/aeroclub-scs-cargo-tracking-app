@@ -85,7 +85,7 @@ class _UnpackULDPageState extends State<UnpackULDPage> {
                                                   (Flight value) {
                                             return DropdownMenuItem<Flight>(
                                               value: value,
-                                              child: Text(value.value),
+                                              child: Text(value.flightNumber),
                                             );
                                           }).toList(),
                                         ),
@@ -97,7 +97,7 @@ class _UnpackULDPageState extends State<UnpackULDPage> {
                                           onChanged: (value ){
                                               if(flight != null){
                                                   var uldFlightSchedule = ULDFlightSchedule(
-                                                      flightNumber : flight!.value,
+                                                      flightNumber : flight!.flightNumber,
                                                       scheduledDepartureDateTime : dateController.text
                                                   );
                                                   data.getULDs(uldFlightSchedule);
@@ -237,7 +237,7 @@ class _UnpackULDPageState extends State<UnpackULDPage> {
                                           return;
                                         }
                                         var loadULD = LoadULD(
-                                            flightID: flight?.id,
+                                            flightID: flight?.flightId,
                                             scheduledDepartureDateTime:
                                                 dateController.text,
                                             uldSerialNumber: selectedUld,

@@ -1,4 +1,5 @@
 import 'package:Cargo_Tracker/domain/data/flight.dart';
+import 'package:Cargo_Tracker/domain/data/package_filter/awb_filter.dart';
 import 'package:Cargo_Tracker/domain/repository/repository.dart';
 import 'package:Cargo_Tracker/provider/base_provider.dart';
 import 'package:flutter/foundation.dart';
@@ -8,6 +9,7 @@ import '../../domain/data/load_uld.dart';
 import '../../domain/data/package_awb.dart';
 import '../../domain/data/package_filter/package_filter_req.dart';
 import '../../domain/data/package_filter/package_filter_res.dart';
+import '../../domain/data/sector.dart';
 import '../../domain/data/uld.dart';
 import '../../domain/data/uld_flight_schedule.dart';
 import '../../domain/shared/constants.dart';
@@ -124,6 +126,25 @@ class ULDLoadProvider extends BaseProvider {
             uldSerialNumberList.add(uld.serialNumber);
           }
         }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+        setLoading(false);
+      }
+    }
+    setLoading(false);
+    notifyListeners();
+  }
+
+  Future<Sector?> getAirportsByAWB(int awbNo) async {
+    try {
+      setLoading(true);
+      AWBFilter awbFilter = AWBFilter(awbTrackingNum: awbNo);
+      var response = await repository!.getAirportsByAWB(awbFilter);
+      if (response != null) {
+        setLoading(false);
+        return response;
       }
     } catch (e) {
       if (kDebugMode) {
