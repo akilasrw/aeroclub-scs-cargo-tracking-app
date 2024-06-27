@@ -272,11 +272,9 @@ class _ScanUnpackULDCargoPageState extends State<ScanUnpackULDCargoPage> {
                                                                   scanCount++;
                                                                   cargoController.text = consignmentNoManualController.text!;
                                                                   bookingItems.add(consignmentNoManualController.text!);
-                                                                  //FlutterBeep.beep();
                                                                   showAlert("AWB", "AWB No : " +
                                                                       awbAssignedPackageList[consignmentNoManualController.text!].toString(),true, onFailMethod);
-                                                                  //Navigator.of(context).pop();
-                                                                  //showAlert("AWB", "AWB No : " + awbAssignedPackageList[consignmentNoManualController.text!],true, onFailMethod);
+                                                                  Navigator.of(context).pop();
                                                                   consignmentNoManualController.clear();
                                                                 }
                                                                 else{
