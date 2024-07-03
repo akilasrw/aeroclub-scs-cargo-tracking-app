@@ -100,7 +100,7 @@ class _FlightLoadingScreenState extends State<FlightLoadingScreen> {
                                               onShowPicker: (context, currentValue) {
                                                 return showDatePicker(
                                                     context: context,
-                                                    firstDate: DateTime(1900),
+                                                    firstDate: DateTime.now(),
                                                     initialDate:
                                                     currentValue ?? DateTime.now(),
                                                     lastDate: DateTime(2100));

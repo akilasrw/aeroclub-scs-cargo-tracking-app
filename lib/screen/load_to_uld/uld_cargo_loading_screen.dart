@@ -121,7 +121,7 @@ class _ULDCargoLoadingPageState extends State<ULDCargoLoadingPage> {
                                               (context, currentValue) {
                                             return showDatePicker(
                                                 context: context,
-                                                firstDate: DateTime(1900),
+                                                firstDate: DateTime.now(),
                                                 initialDate: currentValue ??
                                                     DateTime.now(),
                                                 lastDate: DateTime(2100));

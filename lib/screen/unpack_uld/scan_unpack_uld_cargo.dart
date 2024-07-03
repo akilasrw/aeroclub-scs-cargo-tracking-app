@@ -272,10 +272,8 @@ class _ScanUnpackULDCargoPageState extends State<ScanUnpackULDCargoPage> {
                                                                   scanCount++;
                                                                   cargoController.text = consignmentNoManualController.text!;
                                                                   bookingItems.add(consignmentNoManualController.text!);
-                                                                  showAlert("AWB", "AWB No : " +
-                                                                      awbAssignedPackageList[consignmentNoManualController.text!].toString(),true, onFailMethod);
-                                                                  Navigator.of(context).pop();
                                                                   consignmentNoManualController.clear();
+                                                                  Navigator.of(context).pop();
                                                                 }
                                                                 else{
                                                                   showAlert("Error", "Please check package id and corresponding ULD",false, onFailMethod);
