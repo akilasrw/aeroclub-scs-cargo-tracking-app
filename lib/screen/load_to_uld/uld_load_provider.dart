@@ -91,8 +91,8 @@ class ULDLoadProvider extends BaseProvider {
       //Future.delayed(const Duration(seconds: 2));
       if (isCargoLoading) {
         List<int> status = [];
-          status.add(2);
-          status.add(4);
+          status.add(3);
+          status.add(5);
         var response = await repository!.getListByAwbAndStatus(PackageFilterReq(
             awbNumber: int.parse(awbNumber), packageItemStatuses: status));
         if (response != null) {

@@ -112,7 +112,7 @@ class _ScanPackForDeliveryPageState extends State<ScanPackForDeliveryPage> {
             body: SafeArea(
                 child: ChangeNotifierProvider(
                     create: (BuildContext context) =>
-                    HandoverWarehouseProvider()..getPreviousStatusPackages(widget.bookingStatus.awbNumber!,7,-1),
+                    HandoverWarehouseProvider()..getPreviousStatusPackages(widget.bookingStatus.awbNumber!,8,-1),
                     builder: (context, child) {
                       return Consumer<HandoverWarehouseProvider>(
                           builder: (da, data, child) {
@@ -472,7 +472,7 @@ class _ScanPackForDeliveryPageState extends State<ScanPackForDeliveryPage> {
             scanCount++;
             cargoController.text = scanData.code!;
             CargoBookingItem bookingItem = CargoBookingItem(
-                status: widget.isPackForDelivery ? 8 : 9,
+                status: widget.isPackForDelivery ? 9 : 10,
                 packageItemId: scanData.code!);
             bookingItems.add(bookingItem);
             scannedCargo.add(scanData.code!);

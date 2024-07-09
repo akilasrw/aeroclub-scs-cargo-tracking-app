@@ -511,7 +511,7 @@ class _ScanAcceptCargoPageState extends State<ScanAcceptCargoPage> {
         cargoController.text = scanData!;
         CargoBookingItem bookingItem =
         CargoBookingItem(
-            status: 2,
+            status: 3,
             packageItemId:
             scanData!);
         bookingItems.add(bookingItem);

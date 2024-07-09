@@ -80,7 +80,7 @@ class _UpdateOffloadedCargoPageState extends State<UpdateOffloadedCargoPage> {
             body: SafeArea(
                 child: ChangeNotifierProvider(
                     create: (BuildContext context) =>
-                    HandoverWarehouseProvider()..getPreviousStatusPackages(widget.bookingStatus.awbNumber!,3,2),
+                    HandoverWarehouseProvider()..getPreviousStatusPackages(widget.bookingStatus.awbNumber!,4,3),
                     builder: (context, child) {
                       return Consumer<HandoverWarehouseProvider>(
                           builder: (da, data, child) {
@@ -410,7 +410,7 @@ class _UpdateOffloadedCargoPageState extends State<UpdateOffloadedCargoPage> {
     if(bookingItems != null && bookingItems.isNotEmpty){
       BookingStatus? booking = widget.bookingStatus;
       booking?.itemList = bookingItems;
-      booking.packageItemStatus = type == "Offload" ? 4 : 1;
+      booking.packageItemStatus = type == "Offload" ? 5 : 2;
       var isPacked = await data.handoverCargo(booking);
 
       if (isPacked) {
