@@ -35,4 +35,5 @@ abstract class RemoteHelper {
   Future<List<String>?> getListByAwbAndStatus(PackageFilterReq packageFilterReq);
   Future<List<PackageAWB>?> getListByAwbAndUld(PackageFilterReq packageFilterReq);
   Future<Sector?> getAirportsByAWB(AWBFilter awbFilter);
+  Future<List<ULD>?> getULDsBYStatus();
 }

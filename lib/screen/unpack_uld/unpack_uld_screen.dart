@@ -40,7 +40,7 @@ class _UnpackULDPageState extends State<UnpackULDPage> {
             body: SafeArea(
                 child: ChangeNotifierProvider(
                     create: (BuildContext context) =>
-                        ULDLoadProvider()..initProvider(),
+                        ULDLoadProvider()..initProvider(false),
                     builder: (context, child) {
                       return Consumer<ULDLoadProvider>(
                           builder: (da, data, child) {

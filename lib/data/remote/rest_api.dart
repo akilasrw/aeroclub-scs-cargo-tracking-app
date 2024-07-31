@@ -8,6 +8,7 @@ import 'package:Cargo_Tracker/domain/data/load_uld_to_flight_request.dart';
 import 'package:Cargo_Tracker/domain/data/login_request.dart';
 import 'package:Cargo_Tracker/domain/data/login_response.dart';
 import 'package:Cargo_Tracker/domain/data/uld.dart';
+import 'package:auto_route/annotations.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
@@ -72,4 +73,7 @@ abstract class RestClient {
 
   @GET("/api/v1/CargoBooking/GetAirportsbyAWB")
   Future<Sector?> getAirportsByAWB(@Body() AWBFilter awbFilter);
+
+  @GET("/api/v1/ULD/UldByStatus")
+  Future<List<ULD>?> getULDsBYStatus();
 }

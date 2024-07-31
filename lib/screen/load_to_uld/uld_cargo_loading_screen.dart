@@ -29,7 +29,7 @@ class ULDCargoLoadingPage extends StatefulWidget {
 }
 
 class _ULDCargoLoadingPageState extends State<ULDCargoLoadingPage> {
-  final TextEditingController uldNumberController = TextEditingController();
+ // final TextEditingController uldNumberController = TextEditingController();
   Flight? flight = null;
   final TextEditingController dateController = TextEditingController();
   final TextEditingController awbController = TextEditingController();
@@ -46,7 +46,7 @@ class _ULDCargoLoadingPageState extends State<ULDCargoLoadingPage> {
             body: SafeArea(
                 child: ChangeNotifierProvider(
                     create: (BuildContext context) =>
-                        ULDLoadProvider()..initProvider(),
+                        ULDLoadProvider()..initProvider(widget.isCargoLoading),
                     builder: (context, child) {
                       return Consumer<ULDLoadProvider>(
                           builder: (da, data, child) {
@@ -165,22 +165,7 @@ class _ULDCargoLoadingPageState extends State<ULDCargoLoadingPage> {
                                         const SizedBox(
                                           height: 10,
                                         ),
-                                        widget.isCargoLoading
-                                            ? Row(
-                                                children: [
-                                                  Expanded(
-                                                    flex: 1,
-                                                    child: MainTextField(
-                                                      labelText: 'ULD Number',
-                                                      onValueChanged:
-                                                          (bool value) {},
-                                                      controller:
-                                                          uldNumberController,
-                                                    ),
-                                                  ),
-                                                ],
-                                              )
-                                            : DropdownButtonFormField<String>(
+                                        DropdownButtonFormField<String>(
                                                 isExpanded: true,
                                                 icon: const Icon(Icons
                                                     .arrow_drop_down_circle_rounded),
@@ -295,8 +280,7 @@ class _ULDCargoLoadingPageState extends State<ULDCargoLoadingPage> {
                                           });
                                           return;
                                         }
-                                        if ((uldNumberController.text.isEmpty && widget.isCargoLoading)
-                                            || (!widget.isCargoLoading && selectedUld == null)) {
+                                        if (selectedUld == null) {
                                           AppUtils.showAlert(
                                               context,
                                               'Error',
@@ -379,9 +363,8 @@ class _ULDCargoLoadingPageState extends State<ULDCargoLoadingPage> {
           flightID: flight?.flightId,
           scheduledDepartureDateTime:
           dateController.text,
-          uldSerialNumber:
-          widget.isCargoLoading ? uldNumberController.text : selectedUld,
-          uld: uldNumberController.text,
+          uldSerialNumber: selectedUld,
+          uld: selectedUld,
           awbNumber: awbController.text,
           packageIDs: null);
       context.router.push(ScanULDCargoRoute(

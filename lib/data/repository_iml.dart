@@ -231,4 +231,9 @@ class RepositoryImpl implements Repository {
   Future<Sector?> getAirportsByAWB(AWBFilter awbFilter){
     return _restClient!.getAirportsByAWB(awbFilter);
   }
+
+  @override
+  Future<List<ULD>?> getULDsBYStatus() {
+    return _restClient!.getULDsBYStatus();
+  }
 }

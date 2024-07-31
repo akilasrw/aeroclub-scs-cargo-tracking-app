@@ -26,7 +26,10 @@ class ULDLoadProvider extends BaseProvider {
 
   List<Flight> flightList = List.empty();
 
-  initProvider() async {
+  initProvider(bool isLoading) async {
+    if(isLoading){
+      getGroundedULDs();
+    }
     try {
       Future.delayed(const Duration(seconds: 2));
       var response = await repository!.getFlights();
@@ -145,6 +148,25 @@ class ULDLoadProvider extends BaseProvider {
       if (response != null) {
         setLoading(false);
         return response;
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+        setLoading(false);
+      }
+    }
+    setLoading(false);
+    notifyListeners();
+  }
+
+  getGroundedULDs() async {
+    try {
+      setLoading(true);
+      var response = await repository!.getULDsBYStatus();
+      if (response != null) {
+        for (ULD uld in response) {
+          uldSerialNumberList.add(uld.serialNumber);
+        }
       }
     } catch (e) {
       if (kDebugMode) {
