@@ -9,6 +9,7 @@ import '../../domain/data/load_uld.dart';
 import '../../domain/data/package_awb.dart';
 import '../../domain/data/package_filter/package_filter_req.dart';
 import '../../domain/data/package_filter/package_filter_res.dart';
+import '../../domain/data/package_filter/uld_filter.dart';
 import '../../domain/data/sector.dart';
 import '../../domain/data/uld.dart';
 import '../../domain/data/uld_flight_schedule.dart';
@@ -167,6 +168,24 @@ class ULDLoadProvider extends BaseProvider {
         for (ULD uld in response) {
           uldSerialNumberList.add(uld.serialNumber);
         }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+        setLoading(false);
+      }
+    }
+    setLoading(false);
+    notifyListeners();
+  }
+
+  Future<bool?> checkULDAvailability(String flightNo, String flightDate, String uldNumber) async {
+    try {
+      setLoading(true);
+      ULDFilter uldFilter = ULDFilter(uld: uldNumber, flightNum: flightNo, flightDate: flightDate);
+      var response = await repository!.checkULDAvailability(uldFilter);
+      if (response != null) {
+        return response;
       }
     } catch (e) {
       if (kDebugMode) {

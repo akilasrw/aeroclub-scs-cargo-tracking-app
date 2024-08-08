@@ -16,6 +16,7 @@ import '../data/package_awb.dart';
 import '../data/package_filter/awb_filter.dart';
 import '../data/package_filter/package_filter_req.dart';
 import '../data/package_filter/package_filter_res.dart';
+import '../data/package_filter/uld_filter.dart';
 import '../data/sector.dart';
 import '../data/uld_flight_schedule.dart';
 
@@ -36,4 +37,5 @@ abstract class RemoteHelper {
   Future<List<PackageAWB>?> getListByAwbAndUld(PackageFilterReq packageFilterReq);
   Future<Sector?> getAirportsByAWB(AWBFilter awbFilter);
   Future<List<ULD>?> getULDsBYStatus();
+  Future<bool?> checkULDAvailability(ULDFilter awbFilter);
 }

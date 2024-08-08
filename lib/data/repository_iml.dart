@@ -22,6 +22,7 @@ import '../domain/data/package_awb.dart';
 import '../domain/data/package_filter/awb_filter.dart';
 import '../domain/data/package_filter/package_filter_req.dart';
 import '../domain/data/package_filter/package_filter_res.dart';
+import '../domain/data/package_filter/uld_filter.dart';
 import '../domain/data/sector.dart';
 import '../domain/data/uld_flight_schedule.dart';
 
@@ -235,5 +236,10 @@ class RepositoryImpl implements Repository {
   @override
   Future<List<ULD>?> getULDsBYStatus() {
     return _restClient!.getULDsBYStatus();
+  }
+
+  @override
+  Future<bool?> checkULDAvailability(ULDFilter awbFilter){
+    return _restClient!.checkULDAvailability(awbFilter);
   }
 }

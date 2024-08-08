@@ -20,6 +20,7 @@ import '../../domain/data/package_awb.dart';
 import '../../domain/data/package_filter/awb_filter.dart';
 import '../../domain/data/package_filter/package_filter_req.dart';
 import '../../domain/data/package_filter/package_filter_res.dart';
+import '../../domain/data/package_filter/uld_filter.dart';
 import '../../domain/data/sector.dart';
 import '../../domain/data/uld_flight_schedule.dart';
 
@@ -76,4 +77,7 @@ abstract class RestClient {
 
   @GET("/api/v1/ULD/UldByStatus")
   Future<List<ULD>?> getULDsBYStatus();
+
+  @GET("/api/v1/Package/CheckAvailability")
+  Future<bool?> checkULDAvailability(@Body() ULDFilter awbFilter);
 }

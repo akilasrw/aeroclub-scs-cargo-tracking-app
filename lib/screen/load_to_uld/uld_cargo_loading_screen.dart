@@ -359,18 +359,32 @@ class _ULDCargoLoadingPageState extends State<ULDCargoLoadingPage> {
     String awbNo = awbController.text;
     Sector? sector= await provider.getAirportsByAWB(int.parse(awbNo));
     if(sector != null && checkIsValidSector(sector)){
-      var loadULD = LoadULD(
-          flightID: flight?.flightId,
-          scheduledDepartureDateTime:
-          dateController.text,
-          uldSerialNumber: selectedUld,
-          uld: selectedUld,
-          awbNumber: awbController.text,
-          packageIDs: null);
-      context.router.push(ScanULDCargoRoute(
-          loadULD: loadULD,
-          isCargoLoading:
-          widget.isCargoLoading));
+
+      bool? isUldMatched = await provider.checkULDAvailability(flight!.flightNumber!,
+      dateController.text,selectedUld!);
+      if(isUldMatched!){
+        var loadULD = LoadULD(
+            flightID: flight?.flightId,
+            scheduledDepartureDateTime:
+            dateController.text,
+            uldSerialNumber: selectedUld,
+            uld: selectedUld,
+            awbNumber: awbController.text,
+            packageIDs: null);
+        context.router.push(ScanULDCargoRoute(
+            loadULD: loadULD,
+            isCargoLoading:
+            widget.isCargoLoading));
+      }
+      else{
+        AppUtils.showAlert(
+            context,
+            'Error',
+            "This ULD is already assigned to another flight",
+            false, () {
+          Navigator.of(context).pop();
+        });
+      }
     }
     else{
       AppUtils.showAlert(
