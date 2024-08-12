@@ -78,6 +78,6 @@ abstract class RestClient {
   @GET("/api/v1/ULD/UldByStatus")
   Future<List<ULD>?> getULDsBYStatus();
 
-  @GET("/api/v1/Package/CheckAvailability")
+  @POST("/api/v1/Package/CheckAvailability")
   Future<bool?> checkULDAvailability(@Body() ULDFilter awbFilter);
 }

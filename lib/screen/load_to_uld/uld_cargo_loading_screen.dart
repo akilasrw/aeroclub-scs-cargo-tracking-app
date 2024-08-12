@@ -362,7 +362,7 @@ class _ULDCargoLoadingPageState extends State<ULDCargoLoadingPage> {
 
       bool? isUldMatched = await provider.checkULDAvailability(flight!.flightNumber!,
       dateController.text,selectedUld!);
-      if(isUldMatched!){
+      if(!isUldMatched!){
         var loadULD = LoadULD(
             flightID: flight?.flightId,
             scheduledDepartureDateTime:
