@@ -14,6 +14,7 @@ import '../../domain/data/sector.dart';
 import '../../domain/data/uld.dart';
 import '../../domain/data/uld_flight_schedule.dart';
 import '../../domain/shared/constants.dart';
+import 'check_schedule_query.dart';
 
 class ULDLoadProvider extends BaseProvider {
   late Repository repository;
@@ -184,6 +185,24 @@ class ULDLoadProvider extends BaseProvider {
       setLoading(true);
       ULDFilter uldFilter = ULDFilter(uld: uldNumber, flightNum: flightNo, flightDate: flightDate);
       var response = await repository!.checkULDAvailability(uldFilter);
+      if (response != null) {
+        return response;
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+        setLoading(false);
+      }
+    }
+    setLoading(false);
+    notifyListeners();
+  }
+
+  Future<bool?> checkFlightScheduleAvailability(String flightDate, String flightNo) async {
+    try {
+      setLoading(true);
+      CheckScheduleQuery uldFilter = CheckScheduleQuery(flightNum: flightNo, date: flightDate);
+      var response = await repository!.checkFlightScheduleAvailability(uldFilter);
       if (response != null) {
         return response;
       }

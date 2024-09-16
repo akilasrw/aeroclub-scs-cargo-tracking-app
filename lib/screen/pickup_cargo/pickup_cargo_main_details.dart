@@ -267,8 +267,8 @@ class _PickUpCargoMainDetailsState extends State<PickUpCargoMainDetailsPage> {
                                           });
                                           return;
                                         }
-
-                                        var booking = Booking(
+                                        validateAWBWithFlight(data);
+                                        /*var booking = Booking(
                                             awbTrackingNumber:
                                                 int.parse(awbController.text),
                                             origin: originAirport?.id,
@@ -279,7 +279,7 @@ class _PickUpCargoMainDetailsState extends State<PickUpCargoMainDetailsPage> {
                                                 cargoAgent?.appUserId,
                                             packages: null);
                                         context.router.push(
-                                            ScanCargoRoute(booking: booking));
+                                            ScanCargoRoute(booking: booking));*/
                                       },
                                     ),
                                   ),
@@ -323,6 +323,38 @@ class _PickUpCargoMainDetailsState extends State<PickUpCargoMainDetailsPage> {
                       });
                     }))));
   }
+
+  void validateAWBWithFlight(PickupProvider provider) async{
+
+    String awbNo = awbController.text;
+    String agentId = cargoAgent!.id;
+
+      bool? isUldMatched = await provider.checkAWBAvailability(int.parse(awbNo),
+          agentId);
+      if(isUldMatched!){
+        var booking = Booking(
+            awbTrackingNumber:
+            int.parse(awbController.text),
+            origin: originAirport?.id,
+            destination: desitnationAirport?.id,
+            truckNo: truckController.text,
+            cargoAgent: cargoAgent?.id,
+            cargoAgentAppUserId:
+            cargoAgent?.appUserId,
+            packages: null);
+        context.router.push(
+            ScanCargoRoute(booking: booking));
+      }
+      else{
+        AppUtils.showAlert(
+            context,
+            'Error',
+            "This AWB no is not assigned to the given agent",
+            false, () {
+          Navigator.of(context).pop();
+        });
+      }
+    }
 
 /*  void showAlert(String msg) {
 

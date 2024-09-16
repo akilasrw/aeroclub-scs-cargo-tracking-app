@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
 import '../../domain/shared/constants.dart';
+import 'check_awb_qrery.dart';
 
 class PickupProvider extends BaseProvider {
   late Repository repository;
@@ -57,5 +58,23 @@ class PickupProvider extends BaseProvider {
       setLoading(false);
       return Future.value(false);
     }
+  }
+
+  Future<bool?> checkAWBAvailability(int awbNo, String agentId) async {
+    try {
+      setLoading(true);
+      CheckAWBQuery uldFilter = CheckAWBQuery(awb: awbNo, agentId: agentId);
+      var response = await repository!.checkAWBAvailability(uldFilter);
+      if (response != null) {
+        return response;
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+        setLoading(false);
+      }
+    }
+    setLoading(false);
+    notifyListeners();
   }
 }

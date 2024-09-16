@@ -8,6 +8,7 @@ import 'package:Cargo_Tracker/domain/data/load_uld_to_flight_request.dart';
 import 'package:Cargo_Tracker/domain/data/login_request.dart';
 import 'package:Cargo_Tracker/domain/data/login_response.dart';
 import 'package:Cargo_Tracker/domain/data/uld.dart';
+import 'package:Cargo_Tracker/screen/pickup_cargo/check_awb_qrery.dart';
 import 'package:auto_route/annotations.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +24,7 @@ import '../../domain/data/package_filter/package_filter_res.dart';
 import '../../domain/data/package_filter/uld_filter.dart';
 import '../../domain/data/sector.dart';
 import '../../domain/data/uld_flight_schedule.dart';
+import '../../screen/load_to_uld/check_schedule_query.dart';
 
 part 'rest_api.g.dart';
 
@@ -80,4 +82,10 @@ abstract class RestClient {
 
   @POST("/api/v1/Package/CheckAvailability")
   Future<bool?> checkULDAvailability(@Body() ULDFilter awbFilter);
+
+  @POST("/api/v1/Package/CheckAWB")
+  Future<bool?> checkAWBAvailability(@Body() CheckAWBQuery awbFilter);
+
+  @POST("/api/v1/Package/CheckFlightSchedule")
+  Future<bool?> checkFlightScheduleAvailability(@Body() CheckScheduleQuery checkScheduleQuery);
 }

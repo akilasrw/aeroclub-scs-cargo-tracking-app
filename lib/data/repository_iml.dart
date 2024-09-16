@@ -25,6 +25,8 @@ import '../domain/data/package_filter/package_filter_res.dart';
 import '../domain/data/package_filter/uld_filter.dart';
 import '../domain/data/sector.dart';
 import '../domain/data/uld_flight_schedule.dart';
+import '../screen/load_to_uld/check_schedule_query.dart';
+import '../screen/pickup_cargo/check_awb_qrery.dart';
 
 class RepositoryImpl implements Repository {
   static final RepositoryImpl repository = RepositoryImpl._internal();
@@ -241,5 +243,15 @@ class RepositoryImpl implements Repository {
   @override
   Future<bool?> checkULDAvailability(ULDFilter awbFilter){
     return _restClient!.checkULDAvailability(awbFilter);
+  }
+
+  @override
+  Future<bool?> checkAWBAvailability(CheckAWBQuery awbFilter){
+    return _restClient!.checkAWBAvailability(awbFilter);
+  }
+
+  @override
+  Future<bool?> checkFlightScheduleAvailability(CheckScheduleQuery awbFilter){
+    return _restClient!.checkFlightScheduleAvailability(awbFilter);
   }
 }
