@@ -9,6 +9,8 @@ import 'package:Cargo_Tracker/domain/data/login_request.dart';
 import 'package:Cargo_Tracker/domain/data/login_response.dart';
 import 'package:Cargo_Tracker/domain/data/uld.dart';
 import 'package:Cargo_Tracker/screen/pickup_cargo/check_awb_qrery.dart';
+import 'package:Cargo_Tracker/screen/update_packages/package.dart';
+import 'package:Cargo_Tracker/screen/update_packages/package_search.dart';
 import 'package:auto_route/annotations.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -88,4 +90,10 @@ abstract class RestClient {
 
   @POST("/api/v1/Package/CheckFlightSchedule")
   Future<bool?> checkFlightScheduleAvailability(@Body() CheckScheduleQuery checkScheduleQuery);
+
+  @PUT("/api/v1/Package")
+  Future<BaseResponse> updatePackageItem(@Body() Package package);
+
+  @GET("/api/v1/Package/GetPackageByAWBAndRef")
+  Future<Package?> getPackageFromAWBAndPackageRef(@Body() PackageSearch packageSearch);
 }

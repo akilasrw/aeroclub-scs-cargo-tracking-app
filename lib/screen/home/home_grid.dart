@@ -25,6 +25,7 @@ class HomeGrid extends StatelessWidget {
       _MenuItem('images/7.svg', 'Unpack ULD',const Color(0xFF0B1D3D),false, UnpackULDRoute()),
       //_MenuItem('images/8.svg', 'Customer Delivery',const Color(0xFF041B45),false,PackForDeliveryRoute(isPackForDelivery: true)),
       _MenuItem('images/9.svg', 'Agent Pickup',const Color(0xFF082337),true ,PackForDeliveryRoute(isPackForDelivery: false)),
+      _MenuItem('images/8.svg', 'Update Packages',const Color(0xFF041B45),false,UpdatePackageRoute()),
     ];
 
     menuList.removeWhere((menu) => ((isTruckDriver && !menu.isTruckDriverMenu) ||
