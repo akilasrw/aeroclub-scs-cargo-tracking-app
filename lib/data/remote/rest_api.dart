@@ -27,6 +27,7 @@ import '../../domain/data/package_filter/uld_filter.dart';
 import '../../domain/data/sector.dart';
 import '../../domain/data/uld_flight_schedule.dart';
 import '../../screen/load_to_uld/check_schedule_query.dart';
+import '../../screen/unload_uld/uld_no_filter.dart';
 
 part 'rest_api.g.dart';
 
@@ -96,4 +97,7 @@ abstract class RestClient {
 
   @GET("/api/v1/Package/GetPackageByAWBAndRef")
   Future<Package?> getPackageFromAWBAndPackageRef(@Body() PackageSearch packageSearch);
+
+  @POST("/api/v1/Package/UldUnload")
+  Future<BaseResponse> unloadULD(@Body() ULDNoFilter awbFilter);
 }

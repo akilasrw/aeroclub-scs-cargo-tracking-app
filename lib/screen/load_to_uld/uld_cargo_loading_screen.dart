@@ -109,7 +109,7 @@ class _ULDCargoLoadingPageState extends State<ULDCargoLoadingPage> {
                                                       flightNumber : flight!.flightNumber,
                                                       scheduledDepartureDateTime : dateController.text
                                                   );
-                                                  data.getULDs(uldFlightSchedule);
+                                                  data.getULDs(uldFlightSchedule,false);
                                               }
                                             }
                                           },
@@ -410,7 +410,7 @@ class _ULDCargoLoadingPageState extends State<ULDCargoLoadingPage> {
   }
 
   bool checkIsValidSector(Sector awbSector){
-    bool isValidSector = false;
+    bool isValidSector = true;
     List<Sector> sectors = flight!.sectors!;
     for(Sector sector in sectors){
       if(awbSector.destinationCode == sector.destinationCode && awbSector.originCode == sector.originCode){

@@ -14,6 +14,7 @@ import '../../domain/data/sector.dart';
 import '../../domain/data/uld.dart';
 import '../../domain/data/uld_flight_schedule.dart';
 import '../../domain/shared/constants.dart';
+import '../unload_uld/uld_no_filter.dart';
 import 'check_schedule_query.dart';
 
 class ULDLoadProvider extends BaseProvider {
@@ -121,13 +122,13 @@ class ULDLoadProvider extends BaseProvider {
     notifyListeners();
   }
 
-  getULDs(ULDFlightSchedule uldFlightSchedule) async {
+  getULDs(ULDFlightSchedule uldFlightSchedule, bool isUnloadULD) async {
     try {
       setLoading(true);
       var response = await repository!.getFlightsULDs(uldFlightSchedule);
       if (response != null) {
         for (ULD uld in response) {
-          if(uld.status == 3){
+          if((!isUnloadULD && uld.status == 3) || (isUnloadULD && uld.status == 2)){
             uldSerialNumberList.add(uld.serialNumber);
           }
         }
@@ -214,5 +215,28 @@ class ULDLoadProvider extends BaseProvider {
     }
     setLoading(false);
     notifyListeners();
+  }
+
+  Future<bool> unloadULD(String uldNum) async {
+    try {
+      setLoading(true);
+      ULDNoFilter uldFilter = ULDNoFilter(uldNum: uldNum);
+      var response = await repository.unloadULD(uldFilter);
+      if (response.status != null) {
+        if (response.status == ResultStatus.AllOK.value) {
+          setLoading(false);
+          return Future.value(true);
+        } else {
+          setLoading(false);
+          return Future.value(false);
+        }
+      }
+    } catch (e) {
+      print(e);
+      setLoading(false);
+      return Future.value(false);
+    }
+    setLoading(false);
+    return Future.value(false);
   }
 }

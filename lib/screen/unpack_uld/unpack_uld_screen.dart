@@ -100,7 +100,7 @@ class _UnpackULDPageState extends State<UnpackULDPage> {
                                                       flightNumber : flight!.flightNumber,
                                                       scheduledDepartureDateTime : dateController.text
                                                   );
-                                                  data.getULDs(uldFlightSchedule);
+                                                  data.getULDs(uldFlightSchedule,false);
                                               }
                                           },
                                           controller: dateController,

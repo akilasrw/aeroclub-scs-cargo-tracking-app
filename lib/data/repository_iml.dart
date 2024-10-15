@@ -27,6 +27,7 @@ import '../domain/data/sector.dart';
 import '../domain/data/uld_flight_schedule.dart';
 import '../screen/load_to_uld/check_schedule_query.dart';
 import '../screen/pickup_cargo/check_awb_qrery.dart';
+import '../screen/unload_uld/uld_no_filter.dart';
 import '../screen/update_packages/package.dart';
 import '../screen/update_packages/package_search.dart';
 
@@ -265,5 +266,10 @@ class RepositoryImpl implements Repository {
   @override
   Future<Package?> getPackageFromAWBAndPackageRef(PackageSearch packageSearch){
     return _restClient!.getPackageFromAWBAndPackageRef(packageSearch);
+  }
+
+  @override
+  Future<BaseResponse> unloadULD(ULDNoFilter awbFilter){
+    return _restClient!.unloadULD(awbFilter);
   }
 }

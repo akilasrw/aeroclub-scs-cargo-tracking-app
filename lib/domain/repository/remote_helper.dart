@@ -13,6 +13,7 @@ import 'package:Cargo_Tracker/domain/data/uld.dart';
 
 import '../../screen/load_to_uld/check_schedule_query.dart';
 import '../../screen/pickup_cargo/check_awb_qrery.dart';
+import '../../screen/unload_uld/uld_no_filter.dart';
 import '../../screen/update_packages/package.dart';
 import '../../screen/update_packages/package_search.dart';
 import '../data/flight.dart';
@@ -46,4 +47,5 @@ abstract class RemoteHelper {
   Future<bool?> checkFlightScheduleAvailability(CheckScheduleQuery awbFilter);
   Future<BaseResponse> updatePackageItem(Package package);
   Future<Package?> getPackageFromAWBAndPackageRef(PackageSearch packageSearch);
+  Future<BaseResponse> unloadULD(ULDNoFilter awbFilter);
 }
