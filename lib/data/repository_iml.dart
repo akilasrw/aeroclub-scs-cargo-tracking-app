@@ -269,7 +269,7 @@ class RepositoryImpl implements Repository {
   }
 
   @override
-  Future<BaseResponse> unloadULD(ULDNoFilter awbFilter){
+  Future<bool?> unloadULD(ULDNoFilter awbFilter){
     return _restClient!.unloadULD(awbFilter);
   }
 }

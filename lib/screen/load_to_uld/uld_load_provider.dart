@@ -128,7 +128,7 @@ class ULDLoadProvider extends BaseProvider {
       var response = await repository!.getFlightsULDs(uldFlightSchedule);
       if (response != null) {
         for (ULD uld in response) {
-          if((!isUnloadULD && uld.status == 3) || (isUnloadULD && uld.status == 2)){
+          if((!isUnloadULD && uld.status == 3) || (isUnloadULD && (uld.status == 2 || uld.status == 1))){
             uldSerialNumberList.add(uld.serialNumber);
           }
         }
@@ -222,15 +222,15 @@ class ULDLoadProvider extends BaseProvider {
       setLoading(true);
       ULDNoFilter uldFilter = ULDNoFilter(uldNum: uldNum);
       var response = await repository.unloadULD(uldFilter);
-      if (response.status != null) {
-        if (response.status == ResultStatus.AllOK.value) {
+
+        if (response != null && response) {
           setLoading(false);
           return Future.value(true);
         } else {
           setLoading(false);
           return Future.value(false);
         }
-      }
+
     } catch (e) {
       print(e);
       setLoading(false);

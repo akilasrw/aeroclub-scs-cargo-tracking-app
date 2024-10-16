@@ -99,5 +99,5 @@ abstract class RestClient {
   Future<Package?> getPackageFromAWBAndPackageRef(@Body() PackageSearch packageSearch);
 
   @POST("/api/v1/Package/UldUnload")
-  Future<BaseResponse> unloadULD(@Body() ULDNoFilter awbFilter);
+  Future<bool?> unloadULD(@Body() ULDNoFilter awbFilter);
 }

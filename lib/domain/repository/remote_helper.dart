@@ -47,5 +47,5 @@ abstract class RemoteHelper {
   Future<bool?> checkFlightScheduleAvailability(CheckScheduleQuery awbFilter);
   Future<BaseResponse> updatePackageItem(Package package);
   Future<Package?> getPackageFromAWBAndPackageRef(PackageSearch packageSearch);
-  Future<BaseResponse> unloadULD(ULDNoFilter awbFilter);
+  Future<bool?> unloadULD(ULDNoFilter awbFilter);
 }
